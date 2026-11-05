@@ -1,0 +1,103 @@
+# ============================================================
+# Projeto ENEM — Git ignore
+# ============================================================
+
+# PyCharm
+.idea/
+
+# Documentos virtuais
+.virtual_documents/
+**/.virtual_documents/
+
+# Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Arquivos locais
+notebook/anaconda_projects/
+
+# Experimentos e backups
+sandbox/
+*.bkp.py
+
+# --- Segredos e configurações locais ---
+.env
+.env.*
+!.env.example
+!.env.template
+secrets.toml
+
+# --- Ambientes virtuais ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+wheels/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+.notebook_checkpoints/
+
+# --- IDEs e editores ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Sistema operacional ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+
+# --- Logs e arquivos temporários ---
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+*.old
+
+# --- Dados do ENEM ---
+data/bronze/
+data/staging/
+data/silver/
+data/gold/
+data/analytic/
+data/consumo/
+data/shapefiles/
+data/reports/
+
+
+# --- Metadados gerados ---
+data/metadata/manifesto_*.csv
+data/metadata/catalogo_*.csv
+data/metadata/auditoria_*.csv
+
+# --- Bancos de dados locais ---
+*.duckdb
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Saídas de visualização ---
+*.html
+!docs/**/*.html
+
+#outros
+*.zip
