@@ -23,6 +23,8 @@ import numpy as np
 from scipy.stats import linregress,spearmanr
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy import stats
+
 
 
 # No desenho analítico do projeto:
@@ -178,7 +180,7 @@ def cobertura_temporal(df_painel, df_grupo):
             if PERIODO_ANTIGO["inicio"] <= ano <= PERIODO_ANTIGO["fim"]], default=PERIODO_ANTIGO["fim"]))
 
     ANO_FIM_GRUPOS_NOVO = min(
-        PERIODO_ANTIGO["fim"],
+        PERIODO_NOVO["fim"],    #correcao:PERIODO_ANTIGO["fim"]-> PERIODO_NOVO["fim"]
         max([
             ano
             for ano in anos_grupo
@@ -291,8 +293,6 @@ def calcular_variacao_municipal(painel,periodo,disciplina):
 # ============================================================
 # 5. TENDÊNCIA MUNICIPAL POR PERÍODO
 # ============================================================
-
-
 def calcular_tendencias_municipais(
     painel,
     periodo,
@@ -436,6 +436,202 @@ def calcular_tendencias_municipais(
             })
 
     return pd.DataFrame(resultados)
+
+
+
+# VERSAO2
+
+def calcular_tendencias_municipais2(
+    painel,
+    periodo,
+    disciplinas,
+    min_anos=5,
+):
+
+    # --------------------------------------------------------
+    # 5.1. Seleção do período
+    # --------------------------------------------------------
+
+    dados_periodo = painel[
+        painel["ano"].between(
+            periodo["inicio"],
+            periodo["fim"],
+        )
+    ].copy()
+
+    # --------------------------------------------------------
+    # 5.2. Validação das chaves municipais
+    # --------------------------------------------------------
+
+    colunas_chave = [
+        "CO_MUNICIPIO_TERRITORIO",
+        "ano",
+    ]
+
+    duplicados = dados_periodo.duplicated(
+        subset=colunas_chave,
+        keep=False,
+    )
+
+    if duplicados.any():
+
+        amostra = dados_periodo.loc[
+            duplicados,
+            colunas_chave + ["NO_MUNICIPIO_TERRITORIO"],
+        ].sort_values(colunas_chave)
+
+        raise ValueError(
+            "Existem registros duplicados por código municipal e ano.\n"
+            "A regressão foi interrompida.\n\n"
+            f"Amostra:\n{amostra.head(20)}"
+        )
+
+    # --------------------------------------------------------
+    # 5.3. Agrupamento exclusivamente pelo código municipal
+    # --------------------------------------------------------
+
+    resultados = []
+
+    agrupado = dados_periodo.groupby(
+        "CO_MUNICIPIO_TERRITORIO",
+        dropna=True,
+    )
+
+    total_anos_periodo = (
+        periodo["fim"] - periodo["inicio"] + 1
+    )
+
+    # --------------------------------------------------------
+    # 5.4. Cálculo das tendências
+    # --------------------------------------------------------
+
+    for codigo, dados_municipio in agrupado:
+
+        dados_municipio = dados_municipio.sort_values("ano")
+
+        # Utiliza o nome mais recente disponível.
+        nomes_validos = (
+            dados_municipio[
+                ["ano", "NO_MUNICIPIO_TERRITORIO"]
+            ]
+            .dropna(subset=["NO_MUNICIPIO_TERRITORIO"])
+            .sort_values("ano")
+        )
+
+        municipio = (
+            nomes_validos.iloc[-1]["NO_MUNICIPIO_TERRITORIO"]
+            if not nomes_validos.empty
+            else None
+        )
+
+        for coluna, info in disciplinas.items():
+
+            if coluna not in dados_municipio.columns:
+                raise KeyError(
+                    f"A coluna {coluna} não existe no painel."
+                )
+
+            dados = (
+                dados_municipio[
+                    ["ano", coluna]
+                ]
+                .dropna()
+                .sort_values("ano")
+            )
+
+            if len(dados) < min_anos:
+                continue
+
+            regressao = linregress(
+                dados["ano"],
+                dados[coluna],
+            )
+
+            resultados.append({
+
+                "periodo": periodo["id"],
+                "periodo_rotulo": periodo["rotulo"],
+                "coluna_origem": coluna,
+                "disciplina": info["nome"],
+
+                "versao_redacao": (
+                    info.get("versao_redacao")
+                    if info.get("redacao")
+                    else None
+                ),
+
+                "CO_MUNICIPIO_TERRITORIO": codigo,
+                "NO_MUNICIPIO_TERRITORIO": municipio,
+
+                "n_anos": len(dados),
+
+                "pct_cobertura": (
+                    len(dados) / total_anos_periodo * 100
+                ),
+
+                "ano_inicial": int(dados["ano"].min()),
+                "ano_final": int(dados["ano"].max()),
+
+                "media_inicial": float(
+                    dados.iloc[0][coluna]
+                ),
+
+                "media_final": float(
+                    dados.iloc[-1][coluna]
+                ),
+
+                "variacao_primeiro_ultimo": float(
+                    dados.iloc[-1][coluna]
+                    - dados.iloc[0][coluna]
+                ),
+
+                "slope_pontos_ano": float(regressao.slope),
+                "erro_padrao_slope": float(regressao.stderr),
+                "r2": float(regressao.rvalue ** 2),
+                "p_valor": float(regressao.pvalue),
+
+                "direcao": (
+                    "positiva"
+                    if regressao.slope > 0
+                    else "negativa"
+                    if regressao.slope < 0
+                    else "nula"
+                ),
+            })
+
+    # --------------------------------------------------------
+    # 5.5. DataFrame final e validação
+    # --------------------------------------------------------
+
+    resultado = pd.DataFrame(resultados)
+
+    if not resultado.empty:
+
+        chaves_resultado = [
+            "periodo",
+            "coluna_origem",
+            "CO_MUNICIPIO_TERRITORIO",
+        ]
+
+        duplicados_resultado = resultado.duplicated(
+            subset=chaves_resultado,
+            keep=False,
+        )
+
+        if duplicados_resultado.any():
+
+            display(
+                resultado.loc[duplicados_resultado].sort_values(
+                    chaves_resultado
+                )
+            )
+
+            raise ValueError(
+                "Ainda existem tendências duplicadas por "
+                "município e variável de origem."
+            )
+
+    return resultado
 
 def tend_val(tendencia_municipal_periodizada):
     MIN_ANOS_DISTRIBUICAO = 5
@@ -607,6 +803,7 @@ def calcular_tendencia_estadual(painel,periodo,disciplinas):
     out={'dados':serie,
          'tendencia': pd.DataFrame(resumo)}
     return out
+
 def plotar_tendencia_estadual(
     dados_serie,
     periodo,
@@ -1781,8 +1978,6 @@ def plotar_gap_rede(dados,periodo_id):
     plt.show()
 
 
-if __name__ == "__main__":
-    periodos_analiticos()
 
 # ============================================================
 # CONFIGURAÇÃO DA ANÁLISE TRANSVERSAL POR ANO
@@ -1819,4 +2014,215 @@ def configuracao_analise_transversal(ano):
             info["nome"] for info in disciplinas.values()
         ],
     }
+
+
+def plotar_curva_tendencia(
+    cidade,
+    disciplina,
+    dados_periodo_elegivel=None,
+    tendencias_periodo=None,
+    periodo=None,
+    disciplinas=None,
+    n_minimo=None,
+    min_anos=None,
+    alpha=None,
+    ax=None,
+    mostrar=True,
+):
+    """Plota a curva de tendência municipal de UMA cidade e UMA disciplina.
+
+    Parâmetros obrigatórios:
+        cidade, disciplina
+
+    Opcionais (default = lê do escopo global do módulo/notebook via globals()):
+        dados_periodo_elegivel, tendencias_periodo, periodo,
+        disciplinas, n_minimo, min_anos, alpha, ax, mostrar
+    """
+
+    # --- resolve defaults a partir do escopo de quem chamou ---
+    g = globals()
+    dados_periodo_elegivel = (
+        dados_periodo_elegivel if dados_periodo_elegivel is not None
+        else g.get("dados_periodo_elegivel")
+    )
+    tendencias_periodo = (
+        tendencias_periodo if tendencias_periodo is not None
+        else g.get("tendencias_periodo")
+    )
+    periodo = periodo if periodo is not None else g.get("periodo")
+    disciplinas = disciplinas if disciplinas is not None else g.get("disciplinas")
+    n_minimo = n_minimo if n_minimo is not None else g.get("N_MINIMO", 20)
+    min_anos = min_anos if min_anos is not None else g.get("MIN_ANOS_TENDENCIA", 5)
+    alpha = alpha if alpha is not None else g.get("ALPHA_TENDENCIA", 0.05)
+
+    if dados_periodo_elegivel is None:
+        raise NameError(
+            "dados_periodo_elegivel não definido. Rode o Bloco 6 antes, "
+            "ou passe como parâmetro."
+        )
+    if tendencias_periodo is None:
+        raise NameError(
+            "tendencias_periodo não definido. Rode o Bloco 6 antes, "
+            "ou passe como parâmetro."
+        )
+    if periodo is None:
+        raise NameError(
+            "periodo não definido. Passe como parâmetro: "
+            "plotar_curva_tendencia('BELEM', 'CH', periodo=PERIODOS['2009_2025'], "
+            "disciplinas=ESPECIFICACOES_PERIODO['2009_2025'])"
+        )
+    if disciplinas is None:
+        raise NameError(
+            "disciplinas não definido. Passe como parâmetro."
+        )
+
+    # --- resolve a coluna de média a partir do nome da disciplina ---
+    coluna = next(
+        (col for col, info in disciplinas.items() if info["nome"] == disciplina),
+        None,
+    )
+    if coluna is None:
+        raise ValueError(
+            f"Disciplina {disciplina!r} não existe no período "
+            f"{periodo['rotulo']}. Opções: "
+            f"{[i['nome'] for i in disciplinas.values()]}"
+        )
+
+    # --- localiza o código do município entre os elegíveis ---
+    mask_cidade = (
+        dados_periodo_elegivel["NO_MUNICIPIO_TERRITORIO"]
+        .astype("string").str.upper()
+        .eq(str(cidade).upper())
+    )
+    if not mask_cidade.any():
+        raise ValueError(
+            f"Cidade {cidade!r} não está entre os municípios elegíveis "
+            f"em {periodo['rotulo']} (N > {n_minimo} em todos os anos)."
+        )
+    codigo = dados_periodo_elegivel.loc[
+        mask_cidade, "CO_MUNICIPIO_TERRITORIO"
+    ].iloc[0]
+
+    # --- série de pontos (sem refazer o filtro de N) ---
+    serie = (
+        dados_periodo_elegivel.loc[
+            dados_periodo_elegivel["CO_MUNICIPIO_TERRITORIO"] == codigo,
+            ["ano", coluna, "n_participantes"],
+        ]
+        .copy()
+    )
+    serie[coluna] = pd.to_numeric(serie[coluna], errors="coerce")
+    serie["n_participantes"] = pd.to_numeric(
+        serie["n_participantes"], errors="coerce"
+    )
+    serie = (
+        serie.dropna(subset=[coluna])
+        .sort_values("ano")
+        .reset_index(drop=True)
+    )
+
+    if len(serie) < min_anos:
+        raise ValueError(
+            f"Série insuficiente para {cidade}/{disciplina}: "
+            f"{len(serie)} pontos < {min_anos}."
+        )
+
+    # --- tendência já calculada no Bloco 6 ---
+    linha_tend = tendencias_periodo.loc[
+        (tendencias_periodo["CO_MUNICIPIO_TERRITORIO"] == codigo)
+        & (tendencias_periodo["disciplina"] == disciplina)
+    ]
+    if linha_tend.empty:
+        raise ValueError(
+            f"Sem tendência calculada para {cidade}/{disciplina}."
+        )
+
+    slope = float(linha_tend["slope_pontos_ano"].iloc[0])
+    r2 = float(linha_tend["r2"].iloc[0])
+    p_valor = float(linha_tend["p_valor"].iloc[0])
+    erro_padrao_slope = float(linha_tend["erro_padrao_slope"].iloc[0])
+
+    x = serie["ano"].to_numpy(dtype=float)
+    y = serie[coluna].to_numpy(dtype=float)
+
+    intercept = float(y.mean() - slope * x.mean())
+
+    n = len(x)
+    t_crit = stats.t.ppf(0.975, df=n - 2)
+    residuos = y - (intercept + slope * x)
+    s_res = np.sqrt(np.sum(residuos ** 2) / (n - 2))
+    x_mean = x.mean()
+    sxx = np.sum((x - x_mean) ** 2)
+
+    x_linha = np.linspace(x.min(), x.max(), 200)
+    y_linha = intercept + slope * x_linha
+    se_fit = s_res * np.sqrt(1 / n + (x_linha - x_mean) ** 2 / sxx)
+
+    df_reta = pd.DataFrame({
+        "ano": x_linha,
+        "reta": y_linha,
+        "ic_inf": y_linha - t_crit * se_fit,
+        "ic_sup": y_linha + t_crit * se_fit,
+    })
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10, 5))
+    else:
+        fig = ax.figure
+
+    sns.lineplot(
+        data=serie, x="ano", y=coluna,
+        marker="o", color="steelblue",
+        linewidth=0.9, ax=ax,
+        label="Média municipal observada",
+    )
+    ax.fill_between(
+        df_reta["ano"], df_reta["ic_inf"], df_reta["ic_sup"],
+        color="crimson", alpha=0.15, zorder=1,
+        label="IC 95% da reta",
+    )
+    sns.lineplot(
+        data=df_reta, x="ano", y="reta",
+        color="crimson", linewidth=2.2, ax=ax,
+        label=f"Tendência: {slope:+.2f} pts/ano",
+    )
+    ax.axhline(
+        y.mean(), color="gray", linestyle=":", linewidth=1,
+        label=f"Média do período ({y.mean():.1f})",
+    )
+    for _, row in serie.iterrows():
+        ax.annotate(
+            f"N={int(row['n_participantes'])}",
+            xy=(row["ano"], row[coluna]),
+            xytext=(0, 8), textcoords="offset points",
+            ha="center", fontsize=7, color="dimgray",
+        )
+
+    ax.set_xlabel("Ano")
+    ax.set_ylabel(f"Média municipal — {disciplina}")
+    ax.set_title(
+        f"{str(cidade).upper()} — {disciplina} — {periodo['rotulo']}\n"
+        f"slope = {slope:+.3f} pts/ano | r² = {r2:.3f} | "
+        f"p = {p_valor:.3f} | "
+        f"{'SIGNIFICATIVO' if p_valor < alpha else 'NÃO significativo'} "
+        f"(α = {alpha})",
+        fontsize=11,
+    )
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best", fontsize=9)
+
+    if mostrar and ax is None:
+        plt.tight_layout()
+        plt.show()
+
+    return {
+        "fig": fig, "ax": ax, "serie": serie,
+        "slope": slope, "intercept": intercept, "r2": r2,
+        "p_valor": p_valor, "erro_padrao_slope": erro_padrao_slope,
+        "codigo": codigo, "coluna": coluna,
+    }
+
+def print_S():
+    print('AAAAA')
+
 

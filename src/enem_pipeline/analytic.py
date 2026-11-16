@@ -3,6 +3,10 @@
 
 Não altera Gold. Os produtos são agregados e não contêm identificadores individuais.
 """
+
+
+#update:analytic_duplo_territorio
+#update: novo produto desempenho_sexo_faixa_etaria_municipal
 from __future__ import annotations
 
 from pathlib import Path
@@ -35,6 +39,7 @@ EXPECTED_PRODUCTS = [
     "desempenho_areas_municipal",
     "escola_municipal",
     "desempenho_grupos_municipal",
+    "desempenho_sexo_faixa_etaria_municipal",
 ]
 
 
@@ -85,7 +90,7 @@ def _group_sql(con, path: str, columns: set[str], select_metrics: str, where: st
             {select_metrics}
         FROM read_parquet(?)
         WHERE {where}
-        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR)
+        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR), CAST(TIPO_REFERENCIA_TERRITORIAL AS VARCHAR)
     """
     return con.execute(sql, [path]).df()
 
@@ -126,7 +131,7 @@ def _stats_sql(con, path: str, column: str, prefix: str = "", columns: set[str] 
             QUANTILE_CONT(TRY_CAST({c} AS DOUBLE), 0.25) AS q1{prefix},
             QUANTILE_CONT(TRY_CAST({c} AS DOUBLE), 0.75) AS q3{prefix}
         FROM read_parquet(?)
-        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR)
+        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR), CAST(TIPO_REFERENCIA_TERRITORIAL AS VARCHAR)
         """,
         [path],
     ).df()
@@ -139,25 +144,70 @@ def _concat(frames: list[pd.DataFrame], columns: list[str] | None = None) -> pd.
 
 
 def _sort(df: pd.DataFrame, extra: list[str] | None = None) -> pd.DataFrame:
-    keys = [c for c in ["ano", "CO_MUNICIPIO_TERRITORIO", *(extra or [])] if c in df.columns]
+    keys = [c for c in ["ano", "TIPO_REFERENCIA_TERRITORIAL", "CO_MUNICIPIO_TERRITORIO", *(extra or [])] if c in df.columns]
     return df.sort_values(keys, kind="stable").reset_index(drop=True) if len(df) and keys else df.reset_index(drop=True)
 
+def _sources_for_product(
+    manifesto: pd.DataFrame,
+    product: str,
+    start: int,
+    end: int
+) -> pd.DataFrame:
 
-def _sources_for_product(manifesto: pd.DataFrame, product: str, start: int, end: int) -> pd.DataFrame:
     m = manifesto.copy()
     m["ano"] = pd.to_numeric(m["ano"], errors="raise").astype(int)
     m = m[m["ano"].between(start, end)]
-    if product in {"demografia_municipal", "faixa_etaria_municipal"}:
-        m = m[(m["ano"] <= 2023) | (m["base"] == "participantes")]
-        m = m[m["ano"] <= 2023] if not (m["ano"] >= 2024).any() else m
-        m = m[(m["ano"] < 2024) | (m["base"] == "participantes")]
-    elif product in {"presenca_municipal", "desempenho_redacao_municipal", "desempenho_areas_municipal", "escola_municipal"}:
-        m = m[(m["ano"] < 2024) | (m["base"] == "resultados")]
+
+    if product == "faixa_etaria_municipal":
+
+        # Até 2023: todas as fontes territoriais disponíveis.
+        # A partir de 2024: participantes (PROVA).
+        m = m[
+            (m["ano"] < 2024) |
+            (m["base"] == "participantes")
+        ]
+
+    elif product == "demografia_municipal":
+
+        # Até 2023: todas as fontes territoriais disponíveis.
+        # A partir de 2024:
+        # participantes -> PROVA
+        # resultados    -> ESC
+        filtro_antigo = m["ano"] < 2024
+
+        filtro_novo = (
+            (
+                (m["base"] == "participantes") &
+                (m["tipo_referencia_territorial"] == "PROVA")
+            )
+            |
+            (
+                (m["base"] == "resultados") &
+                (m["tipo_referencia_territorial"] == "ESC")
+            )
+        )
+
+        m = m[filtro_antigo | filtro_novo]
+
+    elif product in {
+        "presenca_municipal",
+        "desempenho_redacao_municipal",
+        "desempenho_areas_municipal",
+        "escola_municipal",
+        "desempenho_grupos_municipal"
+    }:
+        m = m[
+            (m["ano"] < 2024) |
+            (m["base"] == "resultados")
+        ]
+
     elif product == "desempenho_objetiva_municipal":
         m = m[m["ano"] <= 2008]
-    elif product == "desempenho_grupos_municipal":
-        m = m[(m["ano"] < 2024) | (m["base"] == "resultados")]
-    return m.sort_values(["ano", "base"]).reset_index(drop=True)
+
+    return m.sort_values(
+        ["ano", "base", "tipo_referencia_territorial"]
+    ).reset_index(drop=True)
+
 
 
 def _make_demography(con, path, columns, ano, base):
@@ -179,7 +229,7 @@ def _make_demography(con, path, columns, ano, base):
             {male_expr}, {female_expr},
             COUNT({age_expr}) AS n_faixa_etaria_informada
         FROM read_parquet(?)
-        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR)
+        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR), CAST(TIPO_REFERENCIA_TERRITORIAL AS VARCHAR)
     """
     df = con.execute(sql, [path]).df()
     df["base_origem"] = base
@@ -199,7 +249,7 @@ def _make_age(con, path, columns, base):
             {age} AS TP_FAIXA_ETARIA, COUNT(*) AS n_participantes
         FROM read_parquet(?)
         WHERE {age} IS NOT NULL
-        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR), {age}
+        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR), CAST(TIPO_REFERENCIA_TERRITORIAL AS VARCHAR), {age}
     """
     df = con.execute(sql, [path]).df()
     df["base_origem"] = base
@@ -218,7 +268,7 @@ def _make_presence(con, path, columns, base):
             COUNT(*) FILTER (WHERE {presence} = 0) AS n_ausentes,
             COUNT({presence}) AS n_presenca_informada
         FROM read_parquet(?)
-        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR)
+        GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR), CAST(TIPO_REFERENCIA_TERRITORIAL AS VARCHAR)
     """
     df = con.execute(sql, [path]).df()
     denom = df["n_presenca_informada"].where(df["n_presenca_informada"] != 0)
@@ -250,7 +300,7 @@ def _make_school(con, path, columns, ano, base):
             COUNT({dep}) AS n_dependencia_informada
         """
     df = con.execute(
-        f"SELECT {common} {metrics} FROM read_parquet(?) GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR)",
+        f"SELECT {common} {metrics} FROM read_parquet(?) GROUP BY TRY_CAST(NU_ANO AS INTEGER), CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR), CAST(TIPO_REFERENCIA_TERRITORIAL AS VARCHAR)",
         [path],
     ).df()
     for label, col in {
@@ -308,7 +358,108 @@ def _make_groups(con, path, columns, ano, base):
             QUANTILE_CONT(g.nota, 0.25) AS q1, QUANTILE_CONT(g.nota, 0.75) AS q3
         FROM grupos g
         WHERE g.grupo IS NOT NULL AND g.nota IS NOT NULL
-        GROUP BY g.ano, g.CO_MUNICIPIO_TERRITORIO, g.tipo_grupo, g.grupo, g.disciplina
+        GROUP BY g.ano, g.CO_MUNICIPIO_TERRITORIO, g.TIPO_REFERENCIA_TERRITORIAL, g.tipo_grupo, g.grupo, g.disciplina
+    """
+    df = con.execute(sql, [path]).df()
+    df["base_origem"] = base
+    return df
+
+
+def _make_sex_age_performance(con, path, columns, ano, base):
+    """
+    Calcula estatísticas de notas por município, sexo e faixa etária.
+
+    Só é aplicável quando sexo, faixa etária e notas coexistem no mesmo
+    arquivo Gold. Por isso, não é calculado para 2024–2025, quando
+    participantes e resultados não possuem chave individual de ligação.
+    """
+    empty_columns = DIMENSIONS + [
+        "sexo", "faixa_etaria", "disciplina", "n_participantes",
+        "n_validos", "n_zeros", "media", "media_positivas",
+        "mediana", "std", "q1", "q3", "base_origem",
+    ]
+    if ano >= 2024:
+        return pd.DataFrame(columns=empty_columns)
+
+    if not {"TP_SEXO", "TP_FAIXA_ETARIA"}.issubset(columns):
+        return pd.DataFrame(columns=empty_columns)
+
+    male, female = _sex_codes(con, path, columns)
+    if male is None or female is None:
+        return pd.DataFrame(columns=empty_columns)
+
+    disciplines: list[tuple[str, str]] = [("REDACAO", "NU_NOTA_REDACAO")]
+    if ano <= 2008:
+        disciplines.append(("OBJETIVA", "NU_NOTA_OBJETIVA"))
+    else:
+        disciplines.extend((name, SCORE_COLUMNS[name]) for name in ["CN", "CH", "LC", "MT"])
+
+    available = [(name, col) for name, col in disciplines if col in columns]
+    if not available:
+        return pd.DataFrame(columns=empty_columns)
+
+    sex_case = (
+        f"CASE "
+        f"WHEN UPPER(TRIM(CAST(TP_SEXO AS VARCHAR))) = '{male}' THEN 'MASCULINO' "
+        f"WHEN UPPER(TRIM(CAST(TP_SEXO AS VARCHAR))) = '{female}' THEN 'FEMININO' "
+        f"END"
+    )
+    source_columns = [
+        "NU_ANO", "CO_MUNICIPIO_TERRITORIO", "NO_MUNICIPIO_TERRITORIO",
+        "TIPO_REFERENCIA_TERRITORIAL", "TP_SEXO", "TP_FAIXA_ETARIA",
+        *[col for _, col in available],
+    ]
+    select = ", ".join(_ident(col) for col in dict.fromkeys(source_columns))
+
+    pieces = []
+    for discipline, column in available:
+        pieces.append(
+            f"""
+            SELECT
+                NU_ANO AS ano,
+                CO_MUNICIPIO_TERRITORIO,
+                NO_MUNICIPIO_TERRITORIO,
+                TIPO_REFERENCIA_TERRITORIAL,
+                {sex_case} AS sexo,
+                CAST(TP_FAIXA_ETARIA AS VARCHAR) AS faixa_etaria,
+                '{discipline}' AS disciplina,
+                TRY_CAST({_ident(column)} AS DOUBLE) AS nota
+            FROM base
+            WHERE {sex_case} IS NOT NULL
+              AND TP_FAIXA_ETARIA IS NOT NULL
+              AND UPPER(CAST(TIPO_REFERENCIA_TERRITORIAL AS VARCHAR)) IN ('ESC', 'PROVA')
+            """
+        )
+
+    sql = f"""
+        WITH base AS (
+            SELECT {select}
+            FROM read_parquet(?)
+        ),
+        grupos AS (
+            {' UNION ALL '.join(pieces)}
+        )
+        SELECT
+            TRY_CAST(ano AS INTEGER) AS ano,
+            CAST(CO_MUNICIPIO_TERRITORIO AS VARCHAR) AS CO_MUNICIPIO_TERRITORIO,
+            ANY_VALUE(CAST(NO_MUNICIPIO_TERRITORIO AS VARCHAR)) AS NO_MUNICIPIO_TERRITORIO,
+            CAST(TIPO_REFERENCIA_TERRITORIAL AS VARCHAR) AS TIPO_REFERENCIA_TERRITORIAL,
+            sexo,
+            faixa_etaria,
+            disciplina,
+            COUNT(*) AS n_participantes,
+            COUNT(nota) AS n_validos,
+            COUNT(*) FILTER (WHERE nota = 0) AS n_zeros,
+            AVG(nota) AS media,
+            AVG(nota) FILTER (WHERE nota > 0) AS media_positivas,
+            MEDIAN(nota) AS mediana,
+            STDDEV_SAMP(nota) AS std,
+            QUANTILE_CONT(nota, 0.25) AS q1,
+            QUANTILE_CONT(nota, 0.75) AS q3
+        FROM grupos
+        GROUP BY
+            ano, CO_MUNICIPIO_TERRITORIO, TIPO_REFERENCIA_TERRITORIAL,
+            sexo, faixa_etaria, disciplina
     """
     df = con.execute(sql, [path]).df()
     df["base_origem"] = base
@@ -333,7 +484,7 @@ def executar_camada_analitica(
     analytic_root: str | Path, uf: str, ano_inicial: int = 1998,
     ano_final: int = 2025, gravar: bool = True,
 ) -> dict[str, Any]:
-    """Constrói oito produtos analíticos, catálogo e manifesto."""
+    """Constrói nove produtos analíticos, catálogo e manifesto."""
     started = time.perf_counter()
     metadata_dir = Path(metadata_dir)
     analytic_dir = Path(analytic_root) / f"uf={uf}"
@@ -343,7 +494,7 @@ def executar_camada_analitica(
     if not manifesto_path.exists():
         raise FileNotFoundError(f"Manifesto Gold não encontrado: {manifesto_path}")
     manifesto = pd.read_csv(manifesto_path, sep=";", dtype={"uf": "string"})
-    required = {"ano", "base", "arquivo_gold"}
+    required = {"ano", "base", "arquivo_gold", "tipo_referencia_territorial"}
     missing = required - set(manifesto.columns)
     if missing:
         raise ValueError(f"Colunas ausentes no manifesto Gold: {sorted(missing)}")
@@ -365,12 +516,37 @@ def executar_camada_analitica(
             ano, base, path = int(row["ano"]), str(row["base"]), str(row["arquivo_gold"])
             columns = _schema(con, path)
             _base_select(con, path, columns)  # validates required dimensions
-            sources_audit.append({"ano": ano, "base": base, "arquivo_gold": path, "colunas": len(columns)})
+            tipo_manifesto = str(row["tipo_referencia_territorial"]).upper()
+            tipos_arquivo = {
+                str(x[0]).upper()
+                for x in con.execute(
+                    "SELECT DISTINCT TIPO_REFERENCIA_TERRITORIAL FROM read_parquet(?)",
+                    [path],
+                ).fetchall()
+                if x[0] is not None
+            }
+            if tipos_arquivo != {tipo_manifesto}:
+                raise ValueError(
+                    f"Referência territorial divergente em {path}: "
+                    f"manifesto={tipo_manifesto}, arquivo={sorted(tipos_arquivo)}"
+                )
+            sources_audit.append({"ano": ano, "base": base, "referencia": tipo_manifesto, "arquivo_gold": path, "colunas": len(columns)})
 
-            if (ano < 2024 and base == "enem") or (ano >= 2024 and base == "participantes"):
+            # Demografia/faixa etária: uma fonte por perspectiva em 2024–2025.
+            # PROVA vem de participantes; ESC vem de resultados. Para 1998–2023,
+            # cada arquivo Gold territorial é processado independentemente.
+            usar_demografia = (
+                (ano < 2024 and base == "enem")
+                or (ano >= 2024 and (
+                    (base == "participantes" and str(row.get("tipo_referencia_territorial", "")).upper() == "PROVA")
+                    or (base == "resultados" and str(row.get("tipo_referencia_territorial", "")).upper() == "ESC")
+                ))
+            )
+            if usar_demografia:
                 frames["demografia_municipal"].append(_make_demography(con, path, columns, ano, base))
                 frames["faixa_etaria_municipal"].append(_make_age(con, path, columns, base))
 
+            # Produtos baseados em resultados preservam todas as perspectivas Gold.
             if (ano < 2024 and base == "enem") or (ano >= 2024 and base == "resultados"):
                 frames["presenca_municipal"].append(_make_presence(con, path, columns, base))
                 redacao = _stats_sql(con, path, "NU_NOTA_REDACAO", columns=columns)
@@ -378,6 +554,10 @@ def executar_camada_analitica(
                 frames["desempenho_redacao_municipal"].append(redacao)
                 frames["escola_municipal"].append(_make_school(con, path, columns, ano, base))
                 frames["desempenho_grupos_municipal"].append(_make_groups(con, path, columns, ano, base))
+                if ano < 2024 and base == "enem":
+                    frames["desempenho_sexo_faixa_etaria_municipal"].append(
+                        _make_sex_age_performance(con, path, columns, ano, base)
+                    )
 
             if ano <= 2008 and base == "enem":
                 objetiva = _stats_sql(con, path, "NU_NOTA_OBJETIVA", columns=columns)
@@ -406,7 +586,7 @@ def executar_camada_analitica(
                     areas = parts[0]
                     for part in parts[1:]:
                         metric_cols = [c for c in part.columns if c not in DIMENSIONS]
-                        areas = areas.merge(part[DIMENSIONS + metric_cols], on=["ano", "CO_MUNICIPIO_TERRITORIO"], how="outer", validate="one_to_one", suffixes=("", "_dup"))
+                        areas = areas.merge(part[DIMENSIONS + metric_cols], on=["ano", "CO_MUNICIPIO_TERRITORIO", "TIPO_REFERENCIA_TERRITORIAL"], how="outer", validate="one_to_one", suffixes=("", "_dup"))
                         dup = [c for c in areas.columns if c.endswith("_dup")]
                         if dup:
                             areas = areas.drop(columns=dup)
@@ -420,19 +600,20 @@ def executar_camada_analitica(
         products = {name: _sort(_concat(parts)) for name, parts in frames.items()}
         # Product-specific source coverage and output metadata.
         descriptions = {
-            "demografia_municipal": ("ano_municipio", "Contagem de registros e distribuição por sexo; sem identificadores individuais."),
-            "faixa_etaria_municipal": ("ano_municipio_faixa_etaria", "Distribuição por faixa etária, município e ano."),
+            "demografia_municipal": ("ano_municipio", "Contagem de registros e distribuição por sexo, separadas por tipo de referência territorial; sem identificadores individuais."),
+            "faixa_etaria_municipal": ("ano_municipio_faixa_etaria", "Distribuição por faixa etária, município, ano e tipo de referência territorial."),
             "presenca_municipal": ("ano_municipio", "Presença/ausência geral quando TP_PRESENCA está disponível."),
             "desempenho_redacao_municipal": ("ano_municipio", "Estatísticas de redação, com contagem de zeros e média adicional apenas das notas positivas."),
             "desempenho_objetiva_municipal": ("ano_municipio", "Estatísticas da nota objetiva, incluindo zeros e média adicional das notas positivas, 1998–2008."),
             "desempenho_areas_municipal": ("ano_municipio", "Estatísticas de CN, CH, LC e MT, com contagem de zeros e média adicional das notas positivas, a partir de 2009."),
             "escola_municipal": ("ano_municipio", "Distribuição por dependência administrativa da escola."),
             "desempenho_grupos_municipal": ("ano_municipio_grupo_disciplina", "Desempenho por sexo, escola e faixa etária; em 2024–2025, apenas grupos disponíveis em resultados."),
+            "desempenho_sexo_faixa_etaria_municipal": ("ano_municipio_sexo_faixa_etaria_disciplina", "Estatísticas de desempenho por município, sexo, faixa etária e disciplina, somente quando dimensões e notas coexistem na mesma base (até 2023)."),
         }
         catalog_rows, manifest_rows = [], []
         for name in EXPECTED_PRODUCTS:
             df = products[name]
-            if df.empty:
+            if df.empty and name != "desempenho_sexo_faixa_etaria_municipal":
                 raise RuntimeError(f"Produto analítico vazio: {name}. Verifique fontes e disponibilidade de variáveis.")
             destination = analytic_dir / f"{name}.parquet"
             if gravar:
