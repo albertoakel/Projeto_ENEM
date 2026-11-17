@@ -1,30 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#executar_pipeline_lista.py
 
 
 """
 Orquestrador ENEM: Bronze -> Silver -> Gold -> Analytic -> Consumo.
 
-Uso:
-    python executar_pipeline.py
-Informe UF, ano inicial e ano final no terminal.
-
-O script reutiliza os módulos do projeto. A extração e o processamento Silver
-são executados ano a ano para evitar acumular CSVs no staging.
 """
-
 #update: gold_duplo
-# gold/
-# └── uf=PA/
-#     └── ano=2024/
-#         ├── base=participantes/
-#         │   └── referencia=PROVA/
-#         │       └── dados.parquet
-#         └── base=resultados/
-#             ├── referencia=ESC/
-#             │   └── dados.parquet
-#             └── referencia=PROVA/
-#                 └── dados.parquet
 from __future__ import annotations
 
 import sys

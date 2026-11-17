@@ -1,4 +1,4 @@
-
+#consumo.py
 """Construção e auditoria da camada de Consumo a partir da Analítica."""
 
 #update 06/11/2025

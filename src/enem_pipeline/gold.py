@@ -1,3 +1,4 @@
+#gold.py
 """Construção da camada Gold a partir dos arquivos Silver.
 
 Gera um Parquet por ano, base de origem e referência territorial,

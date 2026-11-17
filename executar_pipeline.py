@@ -1,7 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-
+#executar_pipeline.py
 """
 Orquestrador ENEM: Bronze -> Silver -> Gold -> Analytic -> Consumo.
 
@@ -13,18 +10,8 @@ O script reutiliza os módulos do projeto. A extração e o processamento Silver
 são executados ano a ano para evitar acumular CSVs no staging.
 """
 
-#update: gold_duplo
-# gold/
-# └── uf=PA/
-#     └── ano=2024/
-#         ├── base=participantes/
-#         │   └── referencia=PROVA/
-#         │       └── dados.parquet
-#         └── base=resultados/
-#             ├── referencia=ESC/
-#             │   └── dados.parquet
-#             └── referencia=PROVA/
-#                 └── dados.parquet
+# update: gold_duplo
+
 from __future__ import annotations
 
 import sys
