@@ -1,180 +1,230 @@
-# Projeto ENEM — Engenharia, análise temporal e espacial dos microdados (1998–2025)
+# Projeto ENEM — Análise histórica, territorial e educacional
 
-## Visão geral
+Projeto de engenharia e análise de dados dos microdados do **Exame Nacional do Ensino Médio (ENEM)**, abrangendo as edições de **1998 a 2025**.
 
-Este projeto organiza os microdados históricos do Exame Nacional do Ensino Médio (ENEM), de 1998 a 2025, em uma estrutura padronizada e orientada à análise municipal.
+O projeto organiza e harmoniza dados de diferentes edições do exame, produz indicadores agregados por município e ano e disponibiliza os resultados em análises exploratórias e em um dashboard interativo.
 
-A primeira fase utiliza a arquitetura Medalhão para transformar as fontes originais em produtos analíticos rastreáveis:
-
-**Bronze → Silver → Gold → Analytic → Consumo**
-
-O processamento é realizado por Unidade da Federação (UF), respeitando as diferenças de estrutura dos microdados ao longo dos anos.
-
-O projeto também inclui notebooks de análise exploratória transversal, longitudinal e espacial.
+O processamento é estruturado por Unidade da Federação (UF), permitindo trabalhar com diferentes recortes geográficos e temporais, conforme a disponibilidade das fontes.
 
 ## Objetivos
 
-- Organizar os microdados históricos do ENEM.
-- Reduzir o volume de dados por meio da seleção de variáveis relevantes.
-- Harmonizar schemas e referências territoriais.
-- Construir indicadores municipais de participação, perfil e desempenho.
-- Investigar padrões temporais e espaciais.
-- Preparar bases para dashboard e modelos estatísticos/Machine Learning.
+- Organizar os microdados históricos do ENEM em uma estrutura de dados padronizada.
+- Harmonizar variáveis e referências territoriais que mudaram ao longo das edições.
+- Produzir indicadores municipais de participação, perfil dos participantes e desempenho.
+- Explorar padrões temporais e espaciais por meio de análises transversais e longitudinais.
+- Disponibilizar os resultados em um dashboard interativo.
+- Manter rastreabilidade do processamento por meio de manifestos, relatórios e auditorias.
 
-## Arquitetura de dados
+## Visão geral do projeto
+
+O fluxo de dados segue uma arquitetura em camadas:
+
+```text
+Microdados oficiais do ENEM
+            │
+            ▼
+     Bronze / Staging
+            │
+            ▼
+          Silver
+            │
+            ▼
+           Gold
+            │
+            ▼
+         Analytic
+            │
+            ▼
+          Consumo
+            │
+       ┌────┴────┐
+       ▼         ▼
+   Notebooks  Dashboard
+   analíticos  Dash
+```
 
 | Camada | Responsabilidade |
 |---|---|
-| **Bronze** | Inventário e preservação dos ZIPs originais |
-| **Staging** | Extração temporária dos CSVs |
-| **Silver** | Seleção de variáveis, filtro por UF e conversão para Parquet |
-| **Gold** | Schema canônico de 29 colunas e harmonização territorial, preservando registros individuais |
-| **Analytic** | Oito produtos agregados por município, ano e grupos |
-| **Consumo** | Painel municipal integrado e produtos auxiliares prontos para análise |
+| **Bronze** | Armazenamento e inventário dos arquivos originais compactados |
+| **Staging** | Extração temporária dos arquivos necessários ao processamento |
+| **Silver** | Seleção das variáveis de interesse e dos registros da UF |
+| **Gold** | Padronização do esquema e das referências territoriais |
+| **Analytic** | Geração de indicadores e estatísticas agregados por município |
+| **Consumo** | Integração e organização dos produtos para análises e visualizações |
 
-A Gold preserva o nível dos registros. As agregações estatísticas são realizadas somente na Analytic. A construção da Gold está implementada diretamente em `executar_pipeline.py`; Silver, Analytic e Consumo utilizam seus módulos próprios.
+A documentação técnica detalha as regras, os formatos, as validações e os produtos de cada etapa.
 
-### Referência territorial
+## Produtos e análises
 
-A referência territorial utilizada muda historicamente:
+A camada Analytic gera produtos municipais relacionados a:
 
-| Período | Referência |
-|---|---|
-| 1998–2000 | Município de residência |
-| 2001–2007 | Município da escola |
-| 2008–2025 | Município da prova |
+- Demografia dos participantes;
+- Distribuição por faixa etária;
+- Presença no exame;
+- Desempenho em redação;
+- Desempenho na prova objetiva, quando aplicável;
+- Desempenho por área do conhecimento;
+- Características das escolas;
+- Desempenho por grupos;
+- Desempenho por sexo e faixa etária, quando existe suporte nos dados de origem.
 
-A coluna `TIPO_REFERENCIA_TERRITORIAL` registra essa diferença e deve ser considerada nas análises temporais.
+A camada Consumo organiza quatro produtos destinados à exploração:
 
-### Particularidade de 2024 e 2025
+- `painel_municipal`;
+- `faixa_etaria_municipal`;
+- `desempenho_grupos_municipal`;
+- `desempenho_sexo_faixa_etaria_municipal`.
 
-A partir de 2024, o processamento utiliza duas fontes:
+Os notebooks contemplam análises transversais, espaciais e longitudinais, incluindo visualizações cartográficas.
 
-- `PARTICIPANTES`: demografia e faixa etária.
-- `RESULTADOS`: presença, notas, escola e grupos analíticos.
+## Dashboard interativo
 
-Não é realizado join individual entre essas fontes. A compatibilidade é tratada no nível municipal.
+O projeto inclui uma aplicação desenvolvida com **Dash**, com quatro páginas:
 
-## Execução do pipeline
+1. **Visão Geral** — indicadores históricos de participação e desempenho;
+2. **Mapas Municipais** — visualizações temáticas e comparações territoriais;
+3. **Análise Municipal** — evolução e comparação entre municípios;
+4. **Perfil dos Participantes** — distribuições por sexo e faixa etária e cruzamentos disponíveis.
 
-O processamento completo é orquestrado por `executar_pipeline.py`. Ao iniciar, o programa solicita a UF, o ano inicial e o ano final no terminal (com padrões 1998 e 2025).
+A aplicação utiliza os produtos da camada Consumo e arquivos geográficos municipais. Há mecanismos de cache e instrumentação de desempenho para reduzir carregamentos repetidos e acompanhar a execução.
+
+## Tecnologias
+
+- Python
+- DuckDB
+- Pandas
+- Parquet / Zstandard
+- Jupyter Notebook
+- Dash
+- Plotly
+- Folium
+- Shapefiles
+
+## Estrutura do repositório
+
+```text
+Projeto_ENEM/
+├── data/
+│   ├── bronze/
+│   ├── staging/
+│   ├── silver/
+│   ├── gold/
+│   ├── analytic/
+│   ├── consumo/
+│   ├── metadata/
+│   ├── reports/
+│   └── shapefiles/
+├── dash/
+│   ├── app.py
+│   ├── assets/
+│   ├── components/
+│   ├── dash_utils/
+│   └── pages/
+├── docs/
+│   ├── DOCUMENTACAO_PROJETO.md
+│   └── DOCUMENTACAO_MEDALHAO.md
+├── notebook/
+├── src/
+│   ├── enem_pipeline/
+│   └── utils/
+├── executar_pipeline.py
+├── executar_pipeline_lista.py
+└── README.md
+```
+
+Os diretórios de dados armazenam arquivos de origem, produtos intermediários e resultados processados. Os dados são organizados por UF e, conforme a etapa, por ano, base de origem ou referência territorial.
+
+## Como executar
+
+### 1. Preparar o ambiente
+
+Utilize um ambiente Python com as dependências do projeto instaladas. Os módulos de processamento e o dashboard dependem das bibliotecas listadas na seção [Tecnologias](#tecnologias).
+
+> As versões e a instalação detalhada das dependências devem ser conferidas na configuração atual do repositório.
+
+### 2. Disponibilizar os microdados
+
+Coloque os arquivos compactados oficiais do ENEM no diretório:
+
+```text
+data/bronze/
+```
+
+O inventário do pipeline reconhece arquivos no padrão:
+
+```text
+microdados_enem_AAAA.zip
+```
+
+Substitua `AAAA` pelo ano da edição. Os arquivos correspondentes a todos os anos do intervalo solicitado precisam estar disponíveis antes da execução.
+
+**O orquestrador não realiza o download automático dos microdados.**
+
+### 3. Executar o pipeline
+
+Na raiz do projeto:
 
 ```bash
 python executar_pipeline.py
 ```
 
-Antes da execução:
+O script solicita:
 
-1. Disponibilize os ZIPs originais em `data/bronze/`.
-2. Verifique a UF definida no bloco principal de `executar_pipeline.py`.
-3. Confirme o intervalo de anos.
-4. Verifique o catálogo `data/metadata/dicionarios/variaveis_enem_por_ano.csv`.
-5. Configure o ambiente e as dependências Python.
+- Sigla da UF;
+- Ano inicial;
+- Ano final.
 
-O pipeline não realiza o download automático dos ZIPs. A extração e o processamento são realizados ano a ano, evitando acumular todos os CSVs no Staging.
+Em seguida, executa as etapas de processamento e geração dos produtos. Ao final, os metadados e relatórios são registrados nos diretórios configurados do projeto.
 
-**Configuração:** a UF é informada pelo usuário no terminal. `src/enem_pipeline/config.py` mantém PA como UF padrão para chamadas às funções sem UF explícita; o orquestrador passa a UF informada pelo usuário.
+Também está disponível o script `executar_pipeline_lista.py` para execução em lote, conforme sua configuração.
 
-## Estrutura dos diretórios de dados
+### 4. Executar o dashboard
 
-```text
-data/
-├── bronze/       # ZIPs originais
-├── staging/      # CSVs temporários
-├── silver/       # Parquets filtrados por UF e ano
-├── gold/         # Registros com schema canônico
-├── analytic/     # Produtos estatísticos municipais
-├── consumo/      # Painel e produtos para análise
-└── metadata/
-    └── dicionarios/
-        └── variaveis_enem_por_ano.csv
+Depois de gerar os produtos da camada Consumo e disponibilizar os shapefiles necessários, entre no diretório `dash/` e execute:
+
+```bash
+python app.py
 ```
 
-Os produtos processados são organizados por UF. As camadas Silver e Gold também são particionadas por ano e, na Gold, por base de origem.
+Na configuração local atual, a aplicação é iniciada em:
 
-## Produtos da camada Analytic
+```text
+http://127.0.0.1:8050
+```
 
-1. `demografia_municipal`
-2. `faixa_etaria_municipal`
-3. `presenca_municipal`
-4. `desempenho_redacao_municipal`
-5. `desempenho_objetiva_municipal`
-6. `desempenho_areas_municipal`
-7. `escola_municipal`
-8. `desempenho_grupos_municipal`
+### 5. Utilizar os notebooks
 
-## Produtos da camada Consumo
+O diretório `notebook/` reúne notebooks para configuração, execução das etapas, análises e auditorias. Para executar uma análise, os produtos das camadas anteriores correspondentes à UF e ao período devem estar disponíveis.
 
-- `painel_municipal`
-- `faixa_etaria_municipal`
-- `desempenho_grupos_municipal`
+## Cuidados metodológicos
 
-O painel integra indicadores por ano e município. Os produtos de faixa etária e grupos são mantidos separadamente por possuírem granularidade própria.
+A série histórica do ENEM não possui estrutura inteiramente uniforme. Algumas mudanças importantes precisam ser consideradas na leitura dos resultados:
 
-## Notebooks
+- **Referências territoriais:** entre 1998 e 2000, a referência utilizada é o município de residência; entre 2001 e 2007, o município da escola; a partir de 2008, são trabalhadas as referências de escola e prova, conforme a disponibilidade das fontes. Residência, escola e local de prova são perspectivas diferentes e não devem ser tratadas como equivalentes.
+- **Seleção por UF:** a partir de 2008, a seleção de registros na camada Silver utiliza a UF do local de prova. A perspectiva `ESC` gerada posteriormente não implica um novo filtro pela UF da escola.
+- **Estrutura das notas:** até 2008, é utilizada a nota objetiva; a partir de 2009, o desempenho é representado pelas quatro áreas do conhecimento, além da redação. Comparações entre esses períodos exigem cautela.
+- **Edições de 2024 e 2025:** os dados de participantes e resultados são processados em bases separadas. Não é realizado cruzamento individual entre essas fontes; por isso, alguns indicadores cruzados por sexo e faixa etária podem não estar disponíveis nessas edições.
+- **Dados agregados:** os produtos municipais são estatísticas agregadas e não devem ser interpretados como observações individuais.
 
-| Notebook | Conteúdo |
-|---|---|
-| `00_Download_data_ENEM.ipynb` | Obtenção das fontes |
-| `01_Verificar_configuracao.ipynb` | Verificações iniciais |
-| `02_Execucao_silver_todos_anos_por_uf.ipynb` | Execução Silver |
-| `02a_Auditoria_silver.ipynb` | Auditoria Silver |
-| `03_Execucao_gold_municipio_ano.ipynb` | Execução Gold |
-| `03a_Auditoria_gold.ipynb` | Auditoria Gold |
-| `04_Execucao_analitico.ipynb` | Execução Analytic |
-| `05_Execucao_consumo.ipynb` | Execução Consumo |
-| `06_Analise_transversal.ipynb` | EDA transversal |
-| `07_Analise_transversal_mapas.ipynb` | Mapas transversais |
-| `08_Analise_longitudinal.ipynb` | EDA longitudinal |
-| `09a_Analise_longitudinal_mapas.ipynb` | Mapas longitudinais |
-| `09b_Analise_longitudinal_mapas_folium.ipynb` | Mapas interativos |
+Essas condições não impedem a análise histórica, mas precisam acompanhar a interpretação de comparações temporais e territoriais.
 
-## Periodização das análises de desempenho
+## Documentação
 
-| Período | Estrutura |
-|---|---|
-| 1998–2008 | OBJETIVA e REDAÇÃO |
-| 2009–2025 | CN, CH, LC, MT e REDAÇÃO |
+A documentação completa está no diretório [`docs/`](docs/):
 
-Os períodos não devem ser tratados automaticamente como uma série homogênea. As diferenças de estrutura e critérios precisam ser consideradas na interpretação.
+- **[Documentação do Projeto](docs/DOCUMENTACAO_PROJETO.md)** — apresentação, objetivos, fontes, organização do repositório, produtos analíticos, análises, dashboard e limitações.
+- **[Documentação Medalhão](docs/DOCUMENTACAO_MEDALHAO.md)** — arquitetura técnica Bronze, Staging, Silver, Gold, Analytic e Consumo, regras de processamento, validações e auditorias.
 
-## Fases do projeto
+## Licença
 
-### Fase 1 — Engenharia e análise exploratória
+O código-fonte deste projeto é distribuído sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para conhecer os termos de uso, cópia, modificação e redistribuição.
 
-Organização dos dados com arquitetura Medalhão, construção de produtos municipais e realização de EDA transversal, longitudinal e espacial.
+A licença MIT aplica-se ao código deste repositório. Ela não altera os termos de uso dos microdados do ENEM, shapefiles, bibliotecas ou de quaisquer outros materiais de terceiros utilizados pelo projeto. Esses materiais permanecem sujeitos às respectivas licenças e condições definidas por seus titulares.
 
-### Fase 2 — Dashboard
+## Status
 
-Construção de uma interface de visualização, com tecnologia ainda a definir. A camada Consumo será a principal fonte de dados para essa etapa.
+Projeto em desenvolvimento. A documentação e os módulos devem ser atualizados à medida que novas funcionalidades, análises e produtos forem incorporados.
 
-### Fase 3 — Modelagem e investigação
+---
 
-Aplicação de métodos estatísticos e Machine Learning para investigar padrões espaciais, tendências temporais, relações entre indicadores e agrupamentos de municípios.
-
-## Documentação técnica
-
-Consulte **[DOCUMENTACAO.md](docs/DOCUMENTACAO.md)** para conhecer em detalhe:
-
-- o fluxo operacional;
-- as transformações entre camadas;
-- o contrato canônico da Gold;
-- as variáveis e métricas da Analytic;
-- a integração da Consumo;
-- as regras de comparabilidade histórica;
-- as auditorias e os manifestos.
-
-## Tecnologias principais
-
-- Python
-- DuckDB
-- Pandas
-- Parquet
-- Jupyter Notebook
-- GeoPandas e Folium para análises espaciais
-
-
-
-## Observação sobre o orquestrador
-
-Na versão `executar_pipeline(1).py` recebida para correção, o bloco `if __name__ == "__main__"` chama `main()` duas vezes. Antes de executar, mantenha somente `raise SystemExit(main())` nesse bloco, para evitar iniciar o pipeline interativo em duplicidade.
+**Projeto ENEM — Análise histórica, territorial e educacional**
