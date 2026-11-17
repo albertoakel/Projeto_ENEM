@@ -1,3 +1,5 @@
+#pagina_participantes.py
+
 """Página de perfil sociodemográfico dos participantes do ENEM."""
 
 import numpy as np

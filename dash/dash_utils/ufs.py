@@ -1,3 +1,4 @@
+#ufs.py
 """Nomes oficiais das Unidades da Federação disponíveis no dashboard."""
 
 UFS = {

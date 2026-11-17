@@ -1,3 +1,4 @@
+#visao_geral.py
 from dash import Input, Output, State, callback
 from dash_utils.perf import etapa, medir_callback
 

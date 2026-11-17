@@ -3,9 +3,6 @@ from pathlib import Path
 import sys
 from IPython.display import display
 
-
-
-
 diretorio_atual = Path.cwd().resolve()
 
 if diretorio_atual.name in {"utils"}:

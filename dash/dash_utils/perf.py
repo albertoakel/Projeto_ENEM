@@ -1,3 +1,4 @@
+#perf.py
 """Diagnóstico de desempenho: mostra no terminal (python app.py) o que o dashboard está fazendo.
 
 Uso:
