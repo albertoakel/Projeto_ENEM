@@ -13,7 +13,7 @@ from IPython.display import display
 
 diretorio_atual = Path.cwd().resolve()
 
-if diretorio_atual.name.lower() == "analises":
+if diretorio_atual.name.lower() == "estudos_analiticos":
     raiz_projeto = diretorio_atual.parent.parent
 else:
     raiz_projeto = diretorio_atual

@@ -1,10 +1,12 @@
 # Projeto ENEM — Análise histórica, territorial e educacional
 
-Projeto de engenharia e análise de dados dos microdados do **Exame Nacional do Ensino Médio (ENEM)**, abrangendo as edições de **1998 a 2025**.
+Projeto de **Engenharia e Análise de Dados** dos microdados do Exame Nacional do Ensino Médio (ENEM), abrangendo as edições de **1998 a 2025**.
 
-O projeto organiza e harmoniza dados de diferentes edições do exame, produz indicadores agregados por município e ano e disponibiliza os resultados em análises exploratórias e em um dashboard interativo.
+O projeto organiza e harmoniza dados de diferentes edições do exame, produz indicadores agregados por município e ano e disponibiliza os resultados em estudos analíticos e em um dashboard interativo.
 
 O processamento é estruturado por Unidade da Federação (UF), permitindo trabalhar com diferentes recortes geográficos e temporais, conforme a disponibilidade das fontes.
+
+A proposta integra Engenharia de Dados, Análise Exploratória, Estatística e Visualização de Dados para investigar a evolução da participação, o perfil dos participantes e as desigualdades de desempenho no ENEM.
 
 ## Objetivos
 
@@ -12,51 +14,55 @@ O processamento é estruturado por Unidade da Federação (UF), permitindo traba
 - Harmonizar variáveis e referências territoriais que mudaram ao longo das edições.
 - Produzir indicadores municipais de participação, perfil dos participantes e desempenho.
 - Explorar padrões temporais e espaciais por meio de análises transversais e longitudinais.
+- Investigar desigualdades relacionadas a gênero, idade, dependência administrativa e território.
 - Disponibilizar os resultados em um dashboard interativo.
-- Manter rastreabilidade do processamento por meio de manifestos, relatórios e auditorias.
+- Manter a rastreabilidade do processamento por meio de manifestos, relatórios e auditorias.
 
 ## Visão geral do projeto
 
-O fluxo de dados segue uma arquitetura em camadas:
+O fluxo de dados segue uma arquitetura em camadas, baseada no padrão Medalhão:
 
 ```text
-Microdados oficiais do ENEM
-            │
-            ▼
-     Bronze / Staging
-            │
-            ▼
-          Silver
-            │
-            ▼
-           Gold
-            │
-            ▼
-         Analytic
-            │
-            ▼
-          Consumo
-            │
-       ┌────┴────┐
-       ▼         ▼
-   Notebooks  Dashboard
-   analíticos  Dash
+              Microdados oficiais do ENEM
+                         |
+                         v
+                  Bronze / Staging
+                         |
+                         v
+                       Silver
+                         |
+                         v
+                        Gold
+                         |
+                         v
+                      Analytic
+                         |
+                         v
+                      Consumo
+                         |
+                    +----+----+
+                    |         |
+                    v         v
+               Estudos    Dashboard
+              Analíticos    Dash
 ```
 
 | Camada | Responsabilidade |
 |---|---|
-| **Bronze** | Armazenamento e inventário dos arquivos originais compactados |
-| **Staging** | Extração temporária dos arquivos necessários ao processamento |
-| **Silver** | Seleção das variáveis de interesse e dos registros da UF |
-| **Gold** | Padronização do esquema e das referências territoriais |
-| **Analytic** | Geração de indicadores e estatísticas agregados por município |
-| **Consumo** | Integração e organização dos produtos para análises e visualizações |
+| **Bronze** | Armazenamento e inventário dos arquivos originais compactados. |
+| **Staging** | Extração temporária dos arquivos necessários ao processamento. |
+| **Silver** | Seleção das variáveis de interesse e dos registros da UF. |
+| **Gold** | Padronização do esquema e das referências territoriais. |
+| **Analytic** | Geração de indicadores e estatísticas agregados por município. |
+| **Consumo** | Integração e organização dos produtos para análises e visualizações. |
 
 A documentação técnica detalha as regras, os formatos, as validações e os produtos de cada etapa.
 
 ## Produtos e análises
 
-A camada Analytic gera produtos municipais relacionados a:
+### Produtos de dados
+
+A camada Analytic gera nove produtos analíticos relacionados a:
 
 - Demografia dos participantes;
 - Distribuição por faixa etária;
@@ -75,7 +81,35 @@ A camada Consumo organiza quatro produtos destinados à exploração:
 - `desempenho_grupos_municipal`;
 - `desempenho_sexo_faixa_etaria_municipal`.
 
-Os notebooks contemplam análises transversais, espaciais e longitudinais, incluindo visualizações cartográficas.
+### Estudos analíticos
+
+A partir dos produtos da camada Consumo, foram desenvolvidos sete estudos independentes, organizados por questões de pesquisa.
+
+| Eixo | Investigação | Notebook |
+|---|---|---|
+| Q1 | Evolução da participação no ENEM | [Q1 — Participação](notebook/estudos_analiticos/Q1_EVOLUCAO_DA_PARTICIPACAO.ipynb) |
+| Q2 | Desigualdade de gênero | [Q2 — Gênero](notebook/estudos_analiticos/Q2_DESIGUALDADE_DE_GENERO.ipynb) |
+| Q3 | Desempenho por dependência administrativa | [Q3 — Dependência](notebook/estudos_analiticos/Q3_DESEMPENHO_DEPENDENCIA.ipynb) |
+| Q4 | Idade e trajetória dos participantes | [Q4 — Idade](notebook/estudos_analiticos/Q4_IDADE_TRAJETORIA.ipynb) |
+| Q5 | Desigualdade territorial | [Q5 — Território](notebook/estudos_analiticos/Q5_DESIGUALDADE_TERRITORIAL.ipynb) |
+| Q6 | Distribuição e desigualdade do desempenho | [Q6 — Distribuição](notebook/estudos_analiticos/Q6_DISTRIBUICAO_DESEMPENHO.ipynb) |
+| Q7 | Relações entre participação, perfil e desempenho | [Q7 — Participação e perfil](notebook/estudos_analiticos/Q7_PARTICIPACAO_PERFIL_DESEMPENHO.ipynb) |
+
+Os estudos abordam diferentes dimensões do exame:
+
+- Evolução histórica e distribuição territorial da participação;
+- Diferenças de participação e desempenho entre homens e mulheres;
+- Desigualdades entre redes de ensino;
+- Mudanças na composição etária dos participantes;
+- Distribuição territorial e evolução do desempenho municipal;
+- Variabilidade e dispersão das notas;
+- Relações entre participação, composição dos participantes e desempenho.
+
+As investigações são predominantemente descritivas e utilizam indicadores estatísticos, comparações temporais, análises de distribuição, correlações e visualizações.
+
+Os estudos não constituem avaliações causais de políticas públicas. Seus resultados oferecem evidências descritivas sobre a participação e o desempenho no ENEM, contribuindo para a compreensão das desigualdades educacionais.
+
+**Documentação dos estudos:** [Estudos Analíticos — README](notebook/estudos_analiticos/README.md).
 
 ## Dashboard interativo
 
@@ -86,17 +120,24 @@ O projeto inclui uma aplicação desenvolvida com **Dash**, com quatro páginas:
 3. **Análise Municipal** — evolução e comparação entre municípios;
 4. **Perfil dos Participantes** — distribuições por sexo e faixa etária e cruzamentos disponíveis.
 
-A aplicação utiliza os produtos da camada Consumo e arquivos geográficos municipais. Há mecanismos de cache e instrumentação de desempenho para reduzir carregamentos repetidos e acompanhar a execução.
+A aplicação utiliza os produtos da camada Consumo e arquivos geográficos municipais.
+
+Há mecanismos de cache e instrumentação de desempenho para reduzir carregamentos repetidos e acompanhar a execução.
 
 ## Tecnologias
 
 - Python
 - DuckDB
 - Pandas
+- NumPy
+- PyArrow
 - Parquet / Zstandard
 - Jupyter Notebook
+- Matplotlib
+- Seaborn
 - Dash
 - Plotly
+- GeoPandas
 - Folium
 - Shapefiles
 
@@ -104,6 +145,7 @@ A aplicação utiliza os produtos da camada Consumo e arquivos geográficos muni
 
 ```text
 Projeto_ENEM/
+│
 ├── data/
 │   ├── bronze/
 │   ├── staging/
@@ -114,22 +156,57 @@ Projeto_ENEM/
 │   ├── metadata/
 │   ├── reports/
 │   └── shapefiles/
+│
 ├── dash/
 │   ├── app.py
 │   ├── assets/
 │   ├── components/
 │   ├── dash_utils/
 │   └── pages/
+│
 ├── docs/
 │   ├── DOCUMENTACAO_PROJETO.md
 │   └── DOCUMENTACAO_MEDALHAO.md
+│
 ├── notebook/
+│   ├── README.md
+│   │
+│   ├── pipeline/
+│   │   ├── README.md
+│   │   ├── 00_Download_data_ENEM.ipynb
+│   │   ├── 01_Verificar_configuracao.ipynb
+│   │   ├── 02_Execucao_Silver.ipynb
+│   │   ├── 03_Execucao_Gold.ipynb
+│   │   ├── 04_Execucao_Analitico.ipynb
+│   │   ├── 05_Execucao_Consumo.ipynb
+│   │   ├── 06_Analise_transversal.ipynb
+│   │   ├── 07_Analise_transversal_mapas.ipynb
+│   │   ├── 08_Analise_longitudinal.ipynb
+│   │   ├── 09a_Analise_longitudinal_mapas.ipynb
+│   │   ├── 09b_Analise_longitudinal_mapas_folium.ipynb
+│   │   ├── 10_auditoria_integrada_final.ipynb
+│   │   ├── list_variables_consumo.ipynb
+│   │   └── _setup.py
+│   │
+│   └── estudos_analiticos/
+│       ├── README.md
+│       ├── Q1_EVOLUCAO_DA_PARTICIPACAO.ipynb
+│       ├── Q2_DESIGUALDADE_DE_GENERO.ipynb
+│       ├── Q3_DESEMPENHO_DEPENDENCIA.ipynb
+│       ├── Q4_IDADE_TRAJETORIA.ipynb
+│       ├── Q5_DESIGUALDADE_TERRITORIAL.ipynb
+│       ├── Q6_DISTRIBUICAO_DESEMPENHO.ipynb
+│       ├── Q7_PARTICIPACAO_PERFIL_DESEMPENHO.ipynb
+│       └── _setup2.py
+│
 ├── src/
 │   ├── enem_pipeline/
 │   └── utils/
+│
 ├── executar_pipeline.py
 ├── executar_pipeline_lista.py
-└── README.md
+├── README.md
+└── LICENSE
 ```
 
 Os diretórios de dados armazenam arquivos de origem, produtos intermediários e resultados processados. Os dados são organizados por UF e, conforme a etapa, por ano, base de origem ou referência territorial.
@@ -138,9 +215,11 @@ Os diretórios de dados armazenam arquivos de origem, produtos intermediários e
 
 ### 1. Preparar o ambiente
 
-Utilize um ambiente Python com as dependências do projeto instaladas. Os módulos de processamento e o dashboard dependem das bibliotecas listadas na seção [Tecnologias](#tecnologias).
+Utilize um ambiente Python com as dependências do projeto instaladas.
 
-> As versões e a instalação detalhada das dependências devem ser conferidas na configuração atual do repositório.
+Os módulos de processamento e o dashboard dependem das bibliotecas listadas na seção [Tecnologias](#tecnologias).
+
+As versões e a instalação detalhada das dependências devem ser conferidas na configuração atual do repositório.
 
 ### 2. Disponibilizar os microdados
 
@@ -159,6 +238,8 @@ microdados_enem_AAAA.zip
 Substitua `AAAA` pelo ano da edição. Os arquivos correspondentes a todos os anos do intervalo solicitado precisam estar disponíveis antes da execução.
 
 **O orquestrador não realiza o download automático dos microdados.**
+
+O download também pode ser realizado pelo notebook `00_Download_data_ENEM.ipynb`, localizado em `notebook/pipeline/`.
 
 ### 3. Executar o pipeline
 
@@ -194,7 +275,25 @@ http://127.0.0.1:8050
 
 ### 5. Utilizar os notebooks
 
-O diretório `notebook/` reúne notebooks para configuração, execução das etapas, análises e auditorias. Para executar uma análise, os produtos das camadas anteriores correspondentes à UF e ao período devem estar disponíveis.
+Os notebooks estão divididos em dois conjuntos:
+
+**Pipeline de dados**
+
+Diretório: `notebook/pipeline/`
+
+Reúne os notebooks de configuração, obtenção dos dados, execução das camadas, análises transversais e longitudinais e auditoria integrada.
+
+[Consultar documentação do pipeline](notebook/pipeline/README.md).
+
+**Estudos analíticos**
+
+Diretório: `notebook/estudos_analiticos/`
+
+Reúne os sete estudos organizados por questões de pesquisa. Cada notebook pode ser executado independentemente dos demais, desde que os produtos de Consumo necessários estejam disponíveis.
+
+[Consultar documentação dos estudos analíticos](notebook/estudos_analiticos/README.md).
+
+Para conhecer a organização geral dos notebooks, consulte o [README da pasta notebook](notebook/README.md).
 
 ## Cuidados metodológicos
 
@@ -205,26 +304,3 @@ A série histórica do ENEM não possui estrutura inteiramente uniforme. Algumas
 - **Estrutura das notas:** até 2008, é utilizada a nota objetiva; a partir de 2009, o desempenho é representado pelas quatro áreas do conhecimento, além da redação. Comparações entre esses períodos exigem cautela.
 - **Edições de 2024 e 2025:** os dados de participantes e resultados são processados em bases separadas. Não é realizado cruzamento individual entre essas fontes; por isso, alguns indicadores cruzados por sexo e faixa etária podem não estar disponíveis nessas edições.
 - **Dados agregados:** os produtos municipais são estatísticas agregadas e não devem ser interpretados como observações individuais.
-
-Essas condições não impedem a análise histórica, mas precisam acompanhar a interpretação de comparações temporais e territoriais.
-
-## Documentação
-
-A documentação completa está no diretório [`docs/`](docs/):
-
-- **[Documentação do Projeto](docs/DOCUMENTACAO_PROJETO.md)** — apresentação, objetivos, fontes, organização do repositório, produtos analíticos, análises, dashboard e limitações.
-- **[Documentação Medalhão](docs/DOCUMENTACAO_MEDALHAO.md)** — arquitetura técnica Bronze, Staging, Silver, Gold, Analytic e Consumo, regras de processamento, validações e auditorias.
-
-## Licença
-
-O código-fonte deste projeto é distribuído sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para conhecer os termos de uso, cópia, modificação e redistribuição.
-
-A licença MIT aplica-se ao código deste repositório. Ela não altera os termos de uso dos microdados do ENEM, shapefiles, bibliotecas ou de quaisquer outros materiais de terceiros utilizados pelo projeto. Esses materiais permanecem sujeitos às respectivas licenças e condições definidas por seus titulares.
-
-## Status
-
-Projeto em desenvolvimento. A documentação e os módulos devem ser atualizados à medida que novas funcionalidades, análises e produtos forem incorporados.
-
----
-
-**Projeto ENEM — Análise histórica, territorial e educacional**
