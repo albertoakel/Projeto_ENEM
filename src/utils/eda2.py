@@ -2259,10 +2259,7 @@ def plotar_resumo_grupos(resumo_grupos):
 
         fig.suptitle(
             config["titulo"],
-            fontsize=15,
-            fontweight="bold",
-            y=1.02
-        )
+            fontsize=16  )
 
         fig.tight_layout(rect=[0, 0.09, 1, 0.98])
 
@@ -2338,9 +2335,7 @@ def plotar_comparacao_d04(comparacao_d04):
 
     fig.suptitle(
         "Dispersão territorial das médias municipais",
-        fontsize=15,
-        fontweight="bold"
-    )
+        fontsize=16)
 
     fig.tight_layout(rect=[0, 0.08, 1, 0.95])
     plt.show()
@@ -2422,9 +2417,7 @@ def plotar_comparacao_d04(comparacao_d04):
 
     fig.suptitle(
         "Evolução das diferenças entre grupos sociais",
-        fontsize=15,
-        fontweight="bold"
-    )
+        fontsize=16)
 
     fig.tight_layout(rect=[0, 0.12, 1, 0.95])
     plt.show()

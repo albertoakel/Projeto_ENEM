@@ -126,10 +126,6 @@ O Gini das médias municipais deve ser lido como indicador complementar. Seus va
 
 ## **T04 — Quais municípios apresentaram maior evolução do desempenho?**
 
-
-
-## Quais municípios apresentaram maior evolução do desempenho?
-
 A comparação foi realizada entre 2009 e 2023, mantendo a mesma estrutura de exame e a mesma escala. Foram considerados os municípios elegíveis nos dois anos, totalizando 48 municípios por disciplina. Para a análise comparativa, também foram considerados os municípios com pelo menos 20 participantes em cada ano.
 
 | Disciplina | Municípios comuns | Variação mediana (pontos) | Variação média (pontos) | Menor variação | Maior variação |
@@ -162,7 +158,7 @@ Esses resultados mostram que o aumento das médias não implica necessariamente 
 
 ## **T05 — Há concentração territorial dos melhores resultados?**
 
-## Há concentração territorial dos melhores resultados?
+
 
 O ranking anual identifica os municípios que aparecem entre os dez melhores em cada disciplina, considerando apenas os municípios elegíveis. A frequência de aparição no Top 10, expressa como percentual dos anos analisados, permite avaliar a recorrência dos resultados elevados.
 
@@ -200,8 +196,6 @@ A recorrência no Top 10 indica consistência do posicionamento relativo, mas n�
 
 ## **T06 — Como evoluiu a desigualdade territorial por disciplina?**
 
-## Como evoluiu a desigualdade territorial por disciplina?
-
 A análise de dispersão anual de T06 reproduz os mesmos indicadores apresentados na tabela T03. Assim, T06 deve ser interpretada como uma leitura temporal desses indicadores, e não como uma evidência independente.
 
 A comparação do coeficiente de variação (CV) entre 2009 e 2023 resume os principais movimentos:
@@ -226,7 +220,7 @@ Esses resultados indicam que não houve uma trajetória única de convergência 
 
 ## **T07 — Existe relação entre participação e desempenho municipal?**
 
-## **T07 — Existe relação entre participação e desempenho municipal?**
+
 
 As correlações de Pearson, Spearman e Pearson entre o logaritmo do número de participantes e a média municipal foram positivas em todos os anos e disciplinas apresentados. Considerando a mediana anual dos coeficientes entre 2009 e 2023, os resultados foram:
 

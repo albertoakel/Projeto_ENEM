@@ -18,6 +18,8 @@ notebook/anaconda_projects/
 
 # Experimentos e backups
 sandbox/
+/dash/sandbox/
+
 *.bkp.py
 
 # --- Segredos e configurações locais ---
@@ -84,7 +86,9 @@ data/shapefiles/
 data/reports/
 
 
+
 # --- Metadados gerados ---
+/data/metadata/auditoria_territorial
 data/metadata/manifesto_*.csv
 data/metadata/catalogo_*.csv
 data/metadata/auditoria_*.csv
