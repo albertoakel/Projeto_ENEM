@@ -278,6 +278,9 @@ Na configuração local atual, a aplicação é iniciada em:
 ```text
 http://127.0.0.1:8050
 ```
+### Versão demo web
+#### [Abrir aplicação* web ↗](https://dash-apps-2fay.onrender.com/)
+\* versão limita a `UF=PA`
 
 ### 5. Utilizar os notebooks
 
@@ -311,3 +314,12 @@ A série histórica do ENEM não possui estrutura inteiramente uniforme. Algumas
 - **Edições de 2024 e 2025:** os dados de participantes e resultados são processados em bases separadas. Não é realizado cruzamento individual entre essas fontes; por isso, alguns indicadores cruzados por sexo e faixa etária podem não estar disponíveis nessas edições.
 - **Dados agregados:** os produtos municipais são estatísticas agregadas e não devem ser interpretados como observações individuais.
 - **Perfis de agrupamento (Q8):** o K-Means é ajustado separadamente em cada edição, com padronização anual das cinco disciplinas. Os perfis A e B representam posições relativas dentro de cada edição: Perfil A corresponde ao grupo de maior desempenho multidisciplinar relativo e Perfil B ao de menor desempenho. A composição dos grupos pode variar entre anos; portanto, as médias por perfil não representam necessariamente a trajetória de um conjunto fixo de municípios.
+---
+## Uso de inteligência artificial no desenvolvimento
+
+O desenvolvimento do projeto contou com o apoio de ferramentas de Inteligência
+Artificial Generativa, especialmente modelos de linguagem de grande escala (LLMs), 
+na assistência à elaboração, revisão e otimização de códigos, documentação.
+A utilização dessas ferramentas ocorreu de forma assistiva, 
+mantendo sob responsabilidade do desenvolvedor as decisões metodológicas, e direcionamentos
+do projeto .

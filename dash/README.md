@@ -283,7 +283,17 @@ Por padrão, a aplicação é iniciada em:
 http://127.0.0.1:8050
 ```
 
-## 9. Considerações metodológicas
+
+
+
+## 9. Versão demo web
+#### [Abrir aplicação* web ↗](https://dash-apps-2fay.onrender.com/)
+\* versão limita a `UF=PA`
+
+
+
+
+## 10. Considerações metodológicas
 
 A interpretação dos resultados deve considerar as mudanças ocorridas na estrutura do ENEM ao longo do período analisado.
 
@@ -293,7 +303,7 @@ Além disso, os dados apresentam diferenças de disponibilidade temporal, cobert
 
 As médias municipais e estaduais são indicadores agregados. Portanto, os resultados descrevem padrões de participação e desempenho, mas não permitem, isoladamente, estabelecer relações causais.
 
-## 10. Integração com o Projeto ENEM
+## 11. Integração com o Projeto ENEM
 
 O dashboard constitui a camada de visualização e exploração dos dados do Projeto ENEM.
 
