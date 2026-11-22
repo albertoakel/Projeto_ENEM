@@ -3,10 +3,11 @@ import sys
 import warnings
 from matplotlib.ticker import PercentFormatter
 
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
+
 import seaborn as sns
 
 from IPython.display import display
@@ -35,6 +36,8 @@ from enem_pipeline.config import (
 from utils.features_names import read_allfiles2
 from utils import eda2
 
+
+
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 pd.set_option("display.max_columns", None)
@@ -45,3 +48,4 @@ palette = sns.color_palette("tab10", n_colors=8)
 
 plt.rcParams["figure.figsize"] = (12, 5)
 plt.rcParams["figure.dpi"] = 110
+

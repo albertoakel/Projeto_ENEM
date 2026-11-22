@@ -83,7 +83,7 @@ A camada Consumo organiza quatro produtos destinados à exploração:
 
 ### Estudos analíticos
 
-A partir dos produtos da camada Consumo, foram desenvolvidos sete estudos independentes, organizados por questões de pesquisa.
+A partir dos produtos da camada Consumo, foram desenvolvidos oito estudos independentes, organizados por questões de pesquisa.
 
 | Eixo | Investigação | Notebook |
 |---|---|---|
@@ -94,6 +94,7 @@ A partir dos produtos da camada Consumo, foram desenvolvidos sete estudos indepe
 | Q5 | Desigualdade territorial | [Q5 — Território](notebook/estudos_analiticos/Q5_DESIGUALDADE_TERRITORIAL.ipynb) |
 | Q6 | Distribuição e desigualdade do desempenho | [Q6 — Distribuição](notebook/estudos_analiticos/Q6_DISTRIBUICAO_DESEMPENHO.ipynb) |
 | Q7 | Relações entre participação, perfil e desempenho | [Q7 — Participação e perfil](notebook/estudos_analiticos/Q7_PARTICIPACAO_PERFIL_DESEMPENHO.ipynb) |
+| Q8 | Perfis multidimensionais de desempenho municipal | [Q8A — Método](notebook/estudos_analiticos/Q8A_CLUSTERINGS_METODO.ipynb) · [Q8B — Aplicação](notebook/estudos_analiticos/Q8B_CLUSTERINGS_APLICACAO.ipynb) |
 
 Os estudos abordam diferentes dimensões do exame:
 
@@ -103,9 +104,12 @@ Os estudos abordam diferentes dimensões do exame:
 - Mudanças na composição etária dos participantes;
 - Distribuição territorial e evolução do desempenho municipal;
 - Variabilidade e dispersão das notas;
-- Relações entre participação, composição dos participantes e desempenho.
+- Relações entre participação, composição dos participantes e desempenho;
+- Identificação e caracterização de perfis municipais multidimensionais de desempenho nas cinco disciplinas do ENEM.
 
-As investigações são predominantemente descritivas e utilizam indicadores estatísticos, comparações temporais, análises de distribuição, correlações e visualizações.
+O Q8 está dividido em dois notebooks complementares: o Q8A apresenta a comparação metodológica dos algoritmos de agrupamento, a avaliação de estabilidade e a seleção do K-Means com K=2; o Q8B aplica o método aos 37 municípios da coorte balanceada, em 15 edições (2009–2023), caracterizando os perfis, sua distribuição e as transições entre os extremos do período.
+
+As investigações são predominantemente descritivas e utilizam indicadores estatísticos, comparações temporais, análises de distribuição, correlações, métodos de agrupamento e visualizações.
 
 Os estudos não constituem avaliações causais de políticas públicas. Seus resultados oferecem evidências descritivas sobre a participação e o desempenho no ENEM, contribuindo para a compreensão das desigualdades educacionais.
 
@@ -197,6 +201,8 @@ Projeto_ENEM/
 │       ├── Q5_DESIGUALDADE_TERRITORIAL.ipynb
 │       ├── Q6_DISTRIBUICAO_DESEMPENHO.ipynb
 │       ├── Q7_PARTICIPACAO_PERFIL_DESEMPENHO.ipynb
+│       ├── Q8A_CLUSTERINGS_METODO.ipynb
+│       ├── Q8B_CLUSTERINGS_APLICACAO.ipynb
 │       └── _setup2.py
 │
 ├── src/
@@ -289,7 +295,7 @@ Reúne os notebooks de configuração, obtenção dos dados, execução das cama
 
 Diretório: `notebook/estudos_analiticos/`
 
-Reúne os sete estudos organizados por questões de pesquisa. Cada notebook pode ser executado independentemente dos demais, desde que os produtos de Consumo necessários estejam disponíveis.
+Reúne os oito estudos organizados por questões de pesquisa. Os notebooks Q1–Q7 podem ser executados independentemente. O Q8 é composto por dois notebooks complementares: Q8A (método) e Q8B (aplicação). A execução do Q8B depende dos resultados e do método definidos no Q8A, além dos produtos de Consumo necessários.
 
 [Consultar documentação dos estudos analíticos](notebook/estudos_analiticos/README.md).
 
@@ -304,3 +310,4 @@ A série histórica do ENEM não possui estrutura inteiramente uniforme. Algumas
 - **Estrutura das notas:** até 2008, é utilizada a nota objetiva; a partir de 2009, o desempenho é representado pelas quatro áreas do conhecimento, além da redação. Comparações entre esses períodos exigem cautela.
 - **Edições de 2024 e 2025:** os dados de participantes e resultados são processados em bases separadas. Não é realizado cruzamento individual entre essas fontes; por isso, alguns indicadores cruzados por sexo e faixa etária podem não estar disponíveis nessas edições.
 - **Dados agregados:** os produtos municipais são estatísticas agregadas e não devem ser interpretados como observações individuais.
+- **Perfis de agrupamento (Q8):** o K-Means é ajustado separadamente em cada edição, com padronização anual das cinco disciplinas. Os perfis A e B representam posições relativas dentro de cada edição: Perfil A corresponde ao grupo de maior desempenho multidisciplinar relativo e Perfil B ao de menor desempenho. A composição dos grupos pode variar entre anos; portanto, as médias por perfil não representam necessariamente a trajetória de um conjunto fixo de municípios.

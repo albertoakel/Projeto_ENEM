@@ -15,7 +15,7 @@ Os notebooks estão distribuídos em dois diretórios:
 | Diretório | Responsabilidade |
 |---|---|
 | `pipeline/` | Processamento dos microdados, execução da arquitetura Medalhão, construção dos produtos analíticos e auditorias. |
-| `estudos_analiticos/` | Investigações estatísticas, temporais e territoriais organizadas em sete questões de pesquisa. |
+| `estudos_analiticos/` | Investigações estatísticas, temporais e territoriais organizadas em oito questões de pesquisa. |
 
 ### 2.1 Pipeline de dados
 
@@ -35,7 +35,7 @@ As atividades estão organizadas em etapas:
 
 ### 2.2 Estudos analíticos
 
-O diretório `estudos_analiticos/` reúne sete investigações independentes, estruturadas a partir de perguntas de pesquisa relacionadas à participação, ao perfil dos participantes e às desigualdades de desempenho no ENEM.
+O diretório `estudos_analiticos/` reúne oito eixos de investigação, estruturadas a partir de perguntas de pesquisa relacionadas à participação, ao perfil dos participantes e às desigualdades de desempenho no ENEM.
 
 Os estudos estão organizados nos seguintes eixos:
 
@@ -48,10 +48,13 @@ Os estudos estão organizados nos seguintes eixos:
 | Q5 | Desigualdade territorial |
 | Q6 | Distribuição do desempenho |
 | Q7 | Relações entre participação, perfil e desempenho |
+| Q8 | Clusterização do desempenho multidisciplinar (Q8A — método; Q8B — aplicação) |
 
-Cada notebook apresenta sua própria questão de pesquisa, procedimentos metodológicos, visualizações, resultados e conclusões.
+Cada eixo apresenta sua própria questão de pesquisa, procedimentos metodológicos, visualizações, resultados e conclusões. O Q8 é desenvolvido em dois notebooks complementares: Q8A documenta a fundamentação e a seleção do algoritmo; Q8B aplica o método selecionado e caracteriza os perfis municipais.
 
 **Documentação:** [`estudos_analiticos/README.md`](estudos_analiticos/README.md)
+
+O eixo Q8 investiga perfis municipais de desempenho multidisciplinar no ENEM. O notebook `Q8A_CLUSTERINGS_METODO.ipynb` compara algoritmos e seleciona o K-Means com K=2; o notebook `Q8B_CLUSTERINGS_APLICACAO.ipynb` aplica o método aos 37 municípios da coorte balanceada nas edições de 2009 a 2023.
 
 ## 3. Relação entre os diretórios
 

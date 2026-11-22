@@ -2,7 +2,7 @@
 
 ## 1. Apresentação
 
-Esta pasta reúne sete estudos analíticos desenvolvidos a partir dos microdados históricos do Exame Nacional do Ensino Médio (ENEM), com foco na investigação da participação, do perfil dos participantes e das desigualdades de desempenho no estado do Pará.
+Esta pasta reúne oito estudos analíticos desenvolvidos a partir dos microdados históricos do Exame Nacional do Ensino Médio (ENEM), com foco na investigação da participação, do perfil dos participantes e das desigualdades de desempenho no estado do Pará.
 
 Os estudos utilizam os produtos de dados disponibilizados pela arquitetura Medalhão do projeto, especialmente as bases da camada Consumo, para desenvolver análises estatísticas, comparações temporais e investigações territoriais.
 
@@ -12,7 +12,7 @@ O conjunto busca compreender diferentes dimensões do ENEM no território paraen
 
 ## 2. Organização dos estudos
 
-Os sete estudos estão organizados por questões de pesquisa:
+Os oito estudos estão organizados por questões de pesquisa:
 
 | Eixo | Tema | Notebook |
 |---|---|---|
@@ -23,6 +23,8 @@ Os sete estudos estão organizados por questões de pesquisa:
 | Q5 | Desigualdade territorial e desempenho municipal | `Q5_DESIGUALDADE_TERRITORIAL.ipynb` |
 | Q6 | Distribuição e desigualdade do desempenho | `Q6_DISTRIBUICAO_DESEMPENHO.ipynb` |
 | Q7 | Relações entre participação, perfil e desempenho | `Q7_PARTICIPACAO_PERFIL_DESEMPENHO.ipynb` |
+| Q8A | Clusterização: Método | `Q8A_CLUSTERINGS_METODO.ipynb` |
+| Q8B | Clusterização: Aplicação | `Q8B_CLUSTERINGS_APLICACAO.ipynb` |
 
 ## 3. Descrição dos eixos de investigação
 
@@ -283,6 +285,93 @@ As relações entre participação, perfil dos participantes e desempenho munici
 
 A diversidade etária apresentou associação com menor dispersão nas provas objetivas, e a desigualdade entre redes variou conforme a posição dos municípios na distribuição do desempenho.
 
+### Q8 — Clusterização do desempenho multidisciplinar
+
+O eixo Q8 investiga como os municípios paraenses podem ser organizados em perfis semelhantes de desempenho, considerando simultaneamente as cinco disciplinas do ENEM. Foi dividido em dois notebooks complementares: o primeiro fundamenta e seleciona o método; o segundo aplica o método e caracteriza os perfis municipais.
+
+#### Q8A — Método e seleção do algoritmo
+
+**Notebook:** `Q8A_CLUSTERINGS_METODO.ipynb`
+
+**Objetivo**
+
+Investigar e selecionar uma estratégia de clusterização capaz de identificar perfis municipais semelhantes de desempenho multidisciplinar, considerando Ciências Humanas (CH), Ciências da Natureza (CN), Linguagens e Códigos (LC), Matemática (MT) e Redação.
+
+**Período:** 2009–2023.
+
+**Unidade de análise:** município por edição.
+
+**Coorte:** 37 municípios com dados completos nas 15 edições, totalizando 555 observações município-ano.
+
+**Abordagens metodológicas**
+
+- Construção e validação da coorte balanceada;
+- Padronização das cinco disciplinas separadamente em cada edição;
+- Comparação entre K-Means, Aglomerativo Ward, Gaussian Mixture (GMM) e DBSCAN;
+- Avaliação por Silhouette, Calinski–Harabasz, Davies–Bouldin e, quando aplicável, inércia e AIC/BIC;
+- Diagnóstico do número e do tamanho dos grupos;
+- Comparação controlada entre K-Means e Ward para K=2, 3 e 4;
+- Teste de sensibilidade das partições a perturbações gaussianas, utilizando Adjusted Rand Index (ARI).
+
+**Principais resultados**
+
+- K-Means, Ward e GMM produziram soluções avaliáveis em 100% das configurações testadas. O DBSCAN apresentou soluções avaliáveis em 30,37% das configurações.
+- Na competição geral, a Silhouette mediana foi 0,4026 para Ward, 0,3987 para K-Means e 0,3293 para GMM. O DBSCAN apresentou 0,4621 entre as soluções válidas, mas com baixa cobertura e mediana de apenas um grupo.
+- Na comparação controlada para K=2, Ward apresentou Silhouette mediana de 0,4673 e K-Means, 0,4606; as métricas não apontaram superioridade uniforme de um método.
+- Para K=2, a mediana do menor grupo foi de aproximadamente 15 municípios no K-Means e 11 no Ward. Números maiores de grupos produziram subdivisões menores.
+- O K-Means apresentou ARI médio superior ao Ward nas nove combinações de número de grupos e intensidade de perturbação avaliadas.
+
+**Decisão metodológica**
+
+Foi selecionado o K-Means com K=2 para a aplicação. A decisão considera conjuntamente a qualidade de separação, a estabilidade média diante das perturbações simuladas, o equilíbrio dos grupos e a interpretabilidade de uma solução com dois perfis.
+
+#### Q8B — Aplicação e caracterização dos perfis municipais
+
+**Notebook:** `Q8B_CLUSTERINGS_APLICACAO.ipynb`
+
+**Objetivo**
+
+Aplicar o método selecionado no Q8A aos municípios paraenses e caracterizar os perfis multidimensionais identificados, examinando sua distribuição, suas diferenças de desempenho e as mudanças de classificação entre 2009 e 2023.
+
+**Período:** 2009–2023.
+
+**Unidade de análise:** município por edição.
+
+**Fontes:** `painel`, `dsp` e `shape`.
+
+**Delimitação da aplicação**
+
+- Coorte balanceada de 37 municípios com dados completos nas 15 edições;
+- 555 observações município-ano;
+- Cinco disciplinas utilizadas na clusterização;
+- Critério de elegibilidade de mais de 100 participantes;
+- Ajuste independente do K-Means em cada edição, com K=2;
+- Padronização anual das cinco disciplinas;
+- Perfil A: maior desempenho multidisciplinar relativo; Perfil B: menor desempenho multidisciplinar relativo.
+
+**Abordagens analíticas**
+
+- Avaliação da Silhouette por edição;
+- Distribuição e tamanho dos perfis em cada ano;
+- Caracterização multidisciplinar por escores padronizados;
+- Comparação das médias das disciplinas em pontos ENEM;
+- Evolução temporal das médias por perfil;
+- Transição da classificação municipal entre 2009 e 2023;
+- Mapas anuais dos perfis municipais;
+- Exportação das classificações, diagnósticos e tabelas de resultados.
+
+**Principais resultados**
+
+- A Silhouette apresentou média de 0,4533 e mediana de 0,4606 nas 15 edições, variando de 0,3889 em 2013 a 0,5116 em 2021.
+- O Perfil A apresentou médias superiores ao Perfil B nas cinco disciplinas e em todas as 15 edições.
+- A maior diferença média entre os perfis ocorreu em Redação (49,58 pontos), seguida por Matemática (26,56), Linguagens (25,14), Ciências Humanas (24,66) e Ciências da Natureza (21,11).
+- A composição dos grupos variou entre as edições, embora a coorte tenha permanecido fixa em 37 municípios.
+- Entre 2009 e 2023, 32 dos 37 municípios (86,5%) permaneceram no mesmo perfil, enquanto cinco (13,5%) mudaram de classificação. Quatro passaram do Perfil A para o Perfil B; Redenção passou do Perfil B para o Perfil A.
+
+**Nota de interpretação**
+
+Os rótulos originais do K-Means não possuem significado ordinal. Para manter a interpretação consistente, os grupos são ordenados anualmente pela média dos escores padronizados das cinco disciplinas: Perfil A corresponde ao maior desempenho relativo e Perfil B ao menor. Como o modelo é reajustado em cada edição, os perfis representam posições relativas dentro de cada ano. As transições não demonstram, isoladamente, melhora ou piora absoluta do desempenho, e as médias anuais combinam variações nas notas e na composição dos grupos.
+
 ## 4. Procedimentos metodológicos comuns
 
 Embora cada eixo possua objetivos e procedimentos específicos, existem elementos metodológicos compartilhados.
@@ -346,7 +435,7 @@ As correlações entre municípios não representam relações individuais entre
 
 ## 5. Configuração e carregamento dos dados
 
-Os sete notebooks utilizam o arquivo `_setup2.py` para inicializar o ambiente analítico.
+Os nove notebooks utilizam o arquivo `_setup2.py` para inicializar o ambiente analítico.
 
 Esse arquivo:
 
@@ -386,7 +475,7 @@ A referência `ESC` indica a utilização do município da escola como referênc
 
 ## 6. Ordem de execução
 
-Os notebooks podem ser executados independentemente entre si, pois cada eixo representa uma investigação própria.
+Os notebooks dos eixos Q1–Q7 podem ser executados independentemente entre si, pois cada eixo representa uma investigação própria. No eixo Q8, recomenda-se consultar primeiro o Q8A, que documenta a seleção do método, e depois o Q8B, que aplica essa decisão.
 
 Entretanto, todos dependem dos produtos gerados pelo pipeline de dados.
 
@@ -395,9 +484,9 @@ A sequência recomendada é:
 1. Executar e validar as camadas de processamento;
 2. Garantir a disponibilidade dos produtos da camada Consumo;
 3. Configurar a UF e a referência territorial;
-4. Executar os notebooks Q1–Q7 conforme a investigação desejada.
+4. Executar os notebooks Q1–Q8 conforme a investigação desejada.
 
-Não existe dependência obrigatória entre Q1, Q2, Q3, Q4, Q5, Q6 e Q7.
+Não existe dependência obrigatória entre os eixos Q1–Q7. O eixo Q8 possui dois notebooks complementares: Q8A (metodologia) e Q8B (aplicação), sendo recomendada a leitura nessa ordem.
 
 ## 7. Relação com a arquitetura do projeto
 
@@ -413,7 +502,7 @@ Essa separação permite ampliar as investigações sem modificar as etapas de p
 
 ## 8. Considerações finais
 
-Os sete estudos abordam dimensões complementares da participação e do desempenho no ENEM no Pará.
+Os oito estudos abordam dimensões complementares da participação e do desempenho no ENEM no Pará.
 
 Em conjunto, investigam a evolução da participação, as diferenças entre grupos de participantes, as desigualdades entre redes escolares, a composição etária, a distribuição territorial e a variabilidade dos resultados.
 

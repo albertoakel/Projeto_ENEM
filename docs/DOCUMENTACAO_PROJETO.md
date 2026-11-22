@@ -178,22 +178,16 @@ O pacote `src/utils/` reúne funções auxiliares utilizadas em tarefas de anál
 
 ### 6.3 Diretório `notebook/`
 
-Reúne notebooks de execução, análise e auditoria. Entre os notebooks presentes na estrutura do repositório estão:
+Reúne notebooks de processamento, análise e investigação, organizados em dois diretórios com responsabilidades distintas:
 
-- `00_Download_data_ENEM.ipynb`
-- `01_Verificar_configuracao.ipynb`
-- `02_Execucao_Silver.ipynb`
-- `03_Execucao_Gold.ipynb`
-- `04_Execucao_Analitico.ipynb`
-- `05_Execucao_Consumo.ipynb`
-- `06_Analise_transversal.ipynb`
-- `07_Analise_transversal_mapas.ipynb`
-- `08_Analise_longitudinal.ipynb`
-- `09a_Analise_longitudinal_mapas.ipynb`
-- `09b_Analise_longitudinal_mapas_folium.ipynb`
-- `10_auditoria_integrada_final.ipynb`
+- `pipeline/`: notebooks de obtenção, configuração, processamento das camadas, análises transversais e longitudinais e auditoria integrada;
+- `estudos_analiticos/`: notebooks das oito questões de pesquisa (Q1–Q8), desenvolvidas a partir dos produtos disponibilizados pelo pipeline.
 
-Os notebooks de execução acompanham as etapas de preparação e transformação dos dados. Os notebooks analíticos exploram os produtos gerados, enquanto os notebooks de auditoria verificam aspectos de integridade e consistência.
+O diretório `pipeline/` inclui, entre outros, os notebooks `00_Download_data_ENEM.ipynb`, `01_Verificar_configuracao.ipynb`, `02_Execucao_Silver.ipynb`, `03_Execucao_Gold.ipynb`, `04_Execucao_Analitico.ipynb`, `05_Execucao_Consumo.ipynb`, `06_Analise_transversal.ipynb`, `07_Analise_transversal_mapas.ipynb`, `08_Analise_longitudinal.ipynb`, `09a_Analise_longitudinal_mapas.ipynb`, `09b_Analise_longitudinal_mapas_folium.ipynb` e `10_auditoria_integrada_final.ipynb`.
+
+O diretório `estudos_analiticos/` contém os estudos Q1–Q7 e dois notebooks complementares para o Q8: `Q8A_CLUSTERINGS_METODO.ipynb` e `Q8B_CLUSTERINGS_APLICACAO.ipynb`.
+
+Os notebooks de execução acompanham as etapas de preparação e transformação dos dados. Os notebooks analíticos exploram os produtos gerados, enquanto os notebooks de auditoria verificam aspectos de integridade e consistência. A descrição individual dos estudos está disponível em `notebook/estudos_analiticos/README.md`.
 
 ### 6.4 Diretório `dash/`
 
@@ -322,6 +316,58 @@ Investiga a evolução dos indicadores ao longo das edições do ENEM. A leitura
 
 Os notebooks específicos de mapas longitudinais permitem explorar a distribuição espacial dos indicadores ao longo do tempo. A interpretação dessas visualizações depende da disponibilidade dos dados para cada edição e da compatibilidade da referência territorial selecionada.
 
+### 10.5 Estudos analíticos organizados por questões de pesquisa
+
+Além das análises gerais realizadas nos notebooks do pipeline, o projeto reúne oito estudos analíticos independentes, organizados por questões de pesquisa e desenvolvidos a partir dos produtos da camada Consumo.
+
+| Eixo | Tema investigado |
+|---|---|
+| Q1 | Evolução da participação no ENEM |
+| Q2 | Desigualdade de gênero |
+| Q3 | Desempenho por dependência administrativa da escola |
+| Q4 | Idade e trajetória dos participantes |
+| Q5 | Desigualdade territorial e desempenho municipal |
+| Q6 | Distribuição e desigualdade do desempenho |
+| Q7 | Relações entre participação, perfil e desempenho |
+| Q8 | Perfis multidimensionais de desempenho municipal |
+
+Os estudos Q1–Q7 investigam, sob diferentes perspectivas, a evolução da participação, a composição dos participantes, as diferenças entre grupos e redes de ensino, a distribuição das notas e as desigualdades territoriais. Empregam indicadores descritivos, comparações temporais, medidas de concentração e dispersão, correlações e análises de tendências, conforme a questão de pesquisa.
+
+O eixo Q8 amplia esse conjunto ao investigar a formação de perfis municipais considerando simultaneamente as cinco disciplinas do ENEM a partir de 2009. Ele é dividido em dois notebooks complementares.
+
+#### Q8A — Método e seleção do algoritmo
+
+O Q8A investiga estratégias de clusterização para identificar municípios com padrões semelhantes de desempenho multidisciplinar. A unidade de análise é o município por edição, considerando uma coorte balanceada de 37 municípios com dados completos nas 15 edições de 2009 a 2023, totalizando 555 observações município-ano.
+
+As cinco variáveis utilizadas são Ciências Humanas (CH), Ciências da Natureza (CN), Linguagens e Códigos (LC), Matemática (MT) e Redação. A padronização é realizada separadamente em cada edição, preservando a comparação relativa entre municípios dentro do mesmo ano.
+
+A avaliação metodológica compara K-Means, agrupamento aglomerativo pelo método Ward, Gaussian Mixture Model (GMM) e DBSCAN. São consideradas métricas de qualidade de agrupamento, como Silhouette, Calinski–Harabasz e Davies–Bouldin, além de critérios específicos de cada algoritmo quando aplicáveis. Também são avaliados o número e o tamanho dos grupos e a estabilidade das partições diante de perturbações gaussianas, por meio do Adjusted Rand Index (ARI).
+
+O método selecionado para a aplicação é o **K-Means com K=2**. A escolha não decorre de superioridade em todas as métricas de separação: considera conjuntamente a qualidade das partições, a estabilidade média diante das perturbações, o equilíbrio dos grupos e a interpretabilidade de uma solução com dois perfis. Na comparação controlada para K=2, Ward apresentou Silhouette mediana de 0,4673 e K-Means de 0,4606; por outro lado, o K-Means apresentou ARI médio superior ao Ward nas nove combinações de número de grupos e intensidade de perturbação avaliadas.
+
+#### Q8B — Aplicação e caracterização dos perfis municipais
+
+O Q8B aplica o método selecionado no Q8A à mesma coorte de 37 municípios e às 15 edições de 2009 a 2023. O K-Means é ajustado de forma independente em cada edição, sempre com K=2, após a padronização anual das cinco disciplinas. A aplicação utiliza também um critério de elegibilidade de mais de 100 participantes.
+
+Como os rótulos originais do K-Means não possuem significado ordinal, os grupos são ordenados anualmente pela média dos escores padronizados das cinco disciplinas:
+
+- **Perfil A:** maior desempenho multidisciplinar relativo dentro da edição;
+- **Perfil B:** menor desempenho multidisciplinar relativo dentro da edição.
+
+A análise caracteriza a qualidade da separação, a distribuição e o tamanho dos grupos, os escores padronizados, as médias das disciplinas em pontos do ENEM, a evolução temporal, a distribuição espacial e as transições de classificação entre 2009 e 2023.
+
+Entre os principais resultados documentados estão:
+
+- A Silhouette apresentou média de 0,4533 e mediana de 0,4606 nas 15 edições, variando de 0,3889 em 2013 a 0,5116 em 2021.
+- O Perfil A apresentou médias superiores ao Perfil B nas cinco disciplinas em todas as 15 edições.
+- A maior diferença média entre os perfis ocorreu em Redação (49,58 pontos), seguida por Matemática (26,56), Linguagens (25,14), Ciências Humanas (24,66) e Ciências da Natureza (21,11).
+- Embora a coorte permaneça fixa em 37 municípios, a composição de cada perfil varia entre as edições.
+- Entre 2009 e 2023, 32 municípios (86,5%) permaneceram no mesmo perfil e cinco (13,5%) mudaram de classificação. Quatro passaram do Perfil A para o Perfil B; Redenção passou do Perfil B para o Perfil A.
+
+**Limites de interpretação do Q8:** os perfis representam posições relativas dentro de cada edição, pois o modelo é reajustado anualmente. Assim, a mudança de perfil de um município não demonstra, isoladamente, melhora ou piora absoluta do desempenho. Da mesma forma, as médias anuais de cada perfil combinam variações nas notas e mudanças na composição dos grupos; não representam a trajetória de conjuntos fixos de municípios.
+
+A documentação detalhada dos procedimentos e resultados de cada eixo está disponível em `notebook/estudos_analiticos/README.md`.
+
 ## 11. Dashboard interativo
 
 O projeto possui uma aplicação web desenvolvida com **Dash**, utilizando componentes de visualização do ecossistema Plotly e recursos geográficos para a representação municipal.
@@ -411,6 +457,7 @@ As principais limitações conhecidas para a interpretação dos resultados são
 6. **Mudanças na avaliação:** a estrutura das notas objetivas mudou ao longo da série, exigindo cautela em comparações históricas.
 7. **Cobertura geográfica dos mapas:** a exibição depende dos municípios presentes na geometria da UF selecionada e da referência territorial utilizada.
 8. **Interpretação estatística:** médias, dispersões, correlações e indicadores agregados não demonstram, isoladamente, relações causais.
+9. **Perfis municipais do Q8:** os agrupamentos são estimados separadamente por edição e expressam posições relativas entre municípios elegíveis; as transições não devem ser interpretadas como variações absolutas de desempenho.
 
 As análises devem explicitar o período, a UF, a referência territorial, a variável e a população de registros considerados. Sempre que uma comparação atravessar mudanças estruturais importantes, essas mudanças devem ser descritas junto aos resultados.
 

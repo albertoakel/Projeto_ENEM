@@ -521,3 +521,47 @@ def calcular_tendencia_municipal(
         ["disciplina", "tendencia_pontos_por_ano"],
         ascending=[True, False],
     ).reset_index(drop=True)
+
+
+
+def avaliar_particao_clusters(X, labels: Sequence[int]) -> dict:
+    """Calcula métricas internas e diagnóstico de tamanho de uma partição.
+
+    Para DBSCAN, o rótulo -1 é tratado como ruído e excluído das métricas
+    internas; sua quantidade e proporção permanecem no resultado.
+    """
+    from sklearn.metrics import (
+        silhouette_score,
+        calinski_harabasz_score,
+        davies_bouldin_score,
+    )
+
+    X = np.asarray(X, dtype=float)
+    labels = np.asarray(labels)
+    mascara = labels != -1
+    labels_validos = labels[mascara]
+    X_validos = X[mascara]
+    tamanhos = pd.Series(labels_validos).value_counts()
+    n_clusters = int(np.unique(labels_validos).size)
+    n_ruido = int((~mascara).sum())
+
+    resultado = {
+        "n_clusters": n_clusters,
+        "n_ruido": n_ruido,
+        "prop_ruido": n_ruido / len(labels) if len(labels) else np.nan,
+        "n_menor_cluster": int(tamanhos.min()) if not tamanhos.empty else 0,
+        "n_maior_cluster": int(tamanhos.max()) if not tamanhos.empty else 0,
+        "silhouette": np.nan,
+        "calinski_harabasz": np.nan,
+        "davies_bouldin": np.nan,
+    }
+
+    if 2 <= n_clusters < len(X_validos):
+        resultado["silhouette"] = float(silhouette_score(X_validos, labels_validos))
+        resultado["calinski_harabasz"] = float(
+            calinski_harabasz_score(X_validos, labels_validos)
+        )
+        resultado["davies_bouldin"] = float(
+            davies_bouldin_score(X_validos, labels_validos)
+        )
+    return resultado
