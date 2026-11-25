@@ -1,0 +1,12 @@
+dash==4.5.0
+plotly==7.1.0
+pandas==3.1.0
+numpy==2.3.5
+geopandas==1.2.0
+pyarrow==26.0.1
+scipy==1.17.1
+statsmodels==0.15.0
+matplotlib==3.10.9
+seaborn==0.13.2
+ipython==9.17.1
+gunicorn==27.0.1
