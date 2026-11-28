@@ -1,0 +1,9 @@
+referencia,base,linhas_iguais,hash_soma_igual,hash_xor_igual,colunas_iguais
+ESC,painel,True,True,True,True
+ESC,faixa,True,True,True,True
+ESC,grupo,True,True,True,True
+ESC,dsp,True,True,True,True
+PROVA,painel,True,True,True,True
+PROVA,faixa,True,True,True,True
+PROVA,grupo,True,True,True,True
+PROVA,dsp,True,True,True,True

@@ -1,0 +1,185 @@
+.
+├── app_ap_ram.py
+├── app_mm_ram.py
+├── app_otimizado_1.py
+├── app_otimizado_analise_diagnostico.py
+├── app_otimizado_analise_ols_leve.py
+├── app_otimizado_cache1.py
+├── app_otimizado_cache_controlado.py
+├── app_otimizado.py
+├── app_pp_ram.py
+├── app.py
+├── app_ram.py
+├── app_render.zip
+├── app_s.py
+├── app_vg_ram.py
+├── assets
+├── avaliacao_consumo_memoria.ipynb
+├── components
+├── dash_log.2026-11-26_11-40-04
+├── dash_log.2026-11-26_11-40-22
+├── dash_utils
+│   ├── config_dash.py
+│   ├── config.py
+│   ├── data_loader_otimizado.py
+│   ├── data_loader.py
+│   ├── features_names_otimizado.py
+│   ├── features_names.py
+│   ├── __init__.py
+│   ├── perf.py
+│   ├── ram_isolado.py
+│   └── ufs.py
+├── data
+│   ├── consumo
+│   │   └── uf=PA
+│   │       ├── desempenho_grupos_municipal.parquet
+│   │       ├── desempenho_sexo_faixa_etaria_municipal.parquet
+│   │       ├── faixa_etaria_municipal.parquet
+│   │       └── painel_municipal.parquet
+│   └── shapefiles
+│       └── PA_Municipios_2025
+│           ├── LEIA-ME.txt
+│           ├── PA_Municipios_2025.cpg
+│           ├── PA_Municipios_2025.dbf
+│           ├── PA_Municipios_2025.prj
+│           ├── PA_Municipios_2025.qmd
+│           ├── PA_Municipios_2025.shp
+│           └── PA_Municipios_2025.shx
+├── diagnostico_01_memoria_bases_dashboard_enem.ipynb
+├── diagnostico_02_pyarrow_pandas_dashboard_enem.ipynb
+├── diagnostico_03_memory_pool_pyarrow_dashboard_enem.ipynb
+├── diagnostico_04_filtros_parquet_dashboard_enem.ipynb
+├── diagnostico_05_organizacao_fisica_parquet_dashboard_enem.ipynb
+├── _diagnostico05_parquet
+│   ├── dsp
+│   │   ├── ordenado_rg_100000.parquet
+│   │   ├── ordenado_rg_250000.parquet
+│   │   ├── ordenado_rg_50000.parquet
+│   │   └── particionado_referencia
+│   │       ├── TIPO_REFERENCIA_TERRITORIAL=ESC
+│   │       └── TIPO_REFERENCIA_TERRITORIAL=PROVA
+│   └── grupo
+│       ├── ordenado_rg_100000.parquet
+│       ├── ordenado_rg_250000.parquet
+│       ├── ordenado_rg_50000.parquet
+│       └── particionado_referencia
+│           ├── TIPO_REFERENCIA_TERRITORIAL=ESC
+│           ├── TIPO_REFERENCIA_TERRITORIAL=PROVA
+│           └── TIPO_REFERENCIA_TERRITORIAL=RESIDENCIA
+├── diagnostico_06_carregamento_integrado_dashboard_enem.ipynb
+├── diagnostico_06_carregamento_integrado_dashboard_enem_revisado.ipynb
+├── _diagnostico06_resultados
+│   ├── comparacao_linhas.csv
+│   ├── comparacao_original_particionado.csv
+│   ├── resumo_memoria_tempo.csv
+│   └── validacao_equivalencia.csv
+├── diagnostico_07_otimizacao_memoria_dashboard_enem.ipynb
+├── diagnostico_08_combinacao_otimizacoes_memoria_dashboard_enem_corrigido.ipynb
+├── diagnostico_08_combinacao_otimizacoes_memoria_dashboard_enem.ipynb
+├── diagnostico_integracao_otimizada.py
+├── _diagnosticos_memoria_07
+│   ├── downcast_resumo.csv
+│   ├── memory_pool_resumo.csv
+│   ├── organizacao_parquet_detalhe.csv
+│   ├── organizacao_parquet_resumo.csv
+│   ├── parquet_variants
+│   │   ├── dsp
+│   │   │   ├── ordenado_rg_100000.parquet
+│   │   │   ├── ordenado_rg_250000.parquet
+│   │   │   ├── ordenado_rg_50000.parquet
+│   │   │   └── separado_rg_100000
+│   │   ├── faixa
+│   │   │   ├── ordenado_rg_100000.parquet
+│   │   │   ├── ordenado_rg_250000.parquet
+│   │   │   ├── ordenado_rg_50000.parquet
+│   │   │   └── separado_rg_100000
+│   │   ├── grupo
+│   │   │   ├── ordenado_rg_100000.parquet
+│   │   │   ├── ordenado_rg_250000.parquet
+│   │   │   ├── ordenado_rg_50000.parquet
+│   │   │   └── separado_rg_100000
+│   │   └── painel
+│   │       ├── ordenado_rg_100000.parquet
+│   │       ├── ordenado_rg_250000.parquet
+│   │       ├── ordenado_rg_50000.parquet
+│   │       └── separado_rg_100000
+│   ├── read_dictionary_detalhe.csv
+│   ├── read_dictionary_resumo.csv
+│   ├── threads_detalhe.csv
+│   ├── threads_resumo.csv
+│   └── validacao_organizacao_parquet.csv
+├── _diagnosticos_memoria_08
+│   ├── comparacao_configuracao_final.csv
+│   ├── configuracao_candidata.json
+│   ├── downcast_combinado_detalhe.csv
+│   ├── downcast_combinado_resumo.csv
+│   ├── downcast_erros.csv
+│   ├── fatorial_detalhe.csv
+│   ├── fatorial_resumo.csv
+│   ├── fatorial_selecao.csv
+│   ├── layout_combinado_detalhe.csv
+│   ├── layout_combinado_resumo.csv
+│   ├── layout_selecao.csv
+│   ├── memory_pool_detalhe.csv
+│   ├── memory_pool_resumo.csv
+│   ├── validacao_fatorial.csv
+│   └── validacao_layout_combinado.csv
+├── estrutura_projeto.txt
+├── .gitignore
+├── __init__.py
+├── logs
+│   ├── memoria_analise_municipal.27112026_153928.log
+│   ├── memoria_analise_municipal.27112026_154702.log
+│   ├── memoria_analise_municipal.27112026_155109.log
+│   ├── memoria_dashboard.26112026_154722.log
+│   ├── memoria_dashboard.26112026_154819.log
+│   ├── memoria_dashboard.26112026_155755.log
+│   ├── memoria_dashboard.26112026_160140.log
+│   ├── memoria_dashboard.26112026_161336.log
+│   ├── memoria_dashboard.26112026_161926.log
+│   ├── memoria_dashboard.27112026_152553.log
+│   ├── memoria_dashboard.log
+│   ├── memoria_dashboard_.log
+│   ├── memoria_mapas.27112026_153437.log
+│   ├── memoria_mapas.27112026_154614.log
+│   ├── memoria_mapas.27112026_155029.log
+│   ├── memoria_perfil_participantes.27112026_153746.log
+│   ├── memoria_visao_geral.27112026_153343.log
+│   ├── memoria_visao_geral.27112026_155856.log
+│   └── memoria_visao_geral.27112026_160225.log
+├── pages
+│   ├── analise_municipal_diagnostico.py
+│   ├── analise_municipal_lightols_diagnostico.py
+│   ├── analise_municipal_lightols.py
+│   ├── analise_municipal.py
+│   ├── __init__.py
+│   ├── mapa_geral.py
+│   ├── perfil_participantes.py
+│   ├── visao_geral_graficos.py
+│   ├── visao_geral_layout.py
+│   └── visao_geral.py
+├── print_log.2026-11-26_10-00-29
+├── README_cache1.md
+├── README_integracao_otimizada.md
+├── README.md
+├── requirements.txt
+├── sandbox
+│   ├── bkp
+│   │   ├── data_loader_bkp_26112026_1330.py
+│   │   └── data_loader.bkp.py
+│   ├── src_OLD
+│   │   ├── enem_pipeline
+│   │   │   ├── config.py
+│   │   │   └── __init__.py
+│   │   └── utils
+│   │       ├── eda.py
+│   │       ├── features_names.bkp.py
+│   │       ├── features_names.py
+│   │       └── __init__.py
+│   └── visao_geral_graficos.bkp_26112026_1352.py
+├── services
+├── testes.py
+├── Untitled1.ipynb
+└── Untitled.ipynb
+
+39 directories, 144 files

@@ -1,0 +1,60 @@
+------------------------------------------------------------------------------------------
+INICIO
+------------------------------------------------------------------------------------------
+Tempo de leitura: 0.318 s
+Memória dos DataFrames: 101.44 MB
+RSS antes: 128.62 MB
+RSS depois: 502.86 MB
+Variação RSS: 374.23 MB
+==========================================================================================
+PROCESSO 1
+==========================================================================================
+PRIMEIRA CHAMADA
+Tempo: 0.367 s
+RSS antes: 503.13 MB
+RSS depois: 617.57 MB
+
+LINHAS CARREGADAS
+painel: 4,964
+faixa: 61,512
+grupo: 318,263
+dsp: 437,880
+
+SEGUNDA CHAMADA: 0.0001 s
+
+STATUS DO CACHE
+{'entradas_em_memoria': [{'uf': 'PA', 'referencia': 'ESC+PROVA'}], 'quantidade': 1, 'limite': 3}
+==========================================================================================
+PROCESSO 2
+==========================================================================================
+VERSÃO DO PANDAS: 3.1.0
+
+MEMÓRIA DOS OBJETOS
+painel   | Linhas:     4,964 | Colunas:  25 | Memória:     1.09 MB
+faixa    | Linhas:    61,512 | Colunas:   6 | Memória:     4.26 MB
+grupo    | Linhas:   318,263 | Colunas:  13 | Memória:    43.91 MB
+dsp      | Linhas:   437,880 | Colunas:  11 | Memória:    52.18 MB
+shape    | Linhas:       144 | Colunas:  16 | Memória:     0.03 MB
+
+RSS atual: 617.57 MB
+==========================================================================================
+PROCESSO 3
+==========================================================================================
+
+REFERÊNCIA: ESC
+Tempo: 0.189 s
+Memória dos DataFrames: 58.85 MB
+Variação RSS: 40.17 MB
+painel: 3,625 linhas
+faixa: 38,335 linhas
+grupo: 186,449 linhas
+dsp: 250,436 linhas
+
+REFERÊNCIA: PROVA
+Tempo: 0.144 s
+Memória dos DataFrames: 42.59 MB
+Variação RSS: -9.11 MB
+painel: 1,339 linhas
+faixa: 23,177 linhas
+grupo: 131,814 linhas
+dsp: 187,444 linhas

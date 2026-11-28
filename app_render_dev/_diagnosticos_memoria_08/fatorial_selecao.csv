@@ -1,0 +1,5 @@
+cenario,USS_pior_referencia_MB,USS_medio_referencias_MB,RSS_pior_referencia_MB,tempo_medio_s
+threads_false_dictionary_true,218.85546875,198.583984375,317.8515625,0.37896218100104306
+threads_true_dictionary_true,222.10546875,201.34375,320.86328125,0.32053974849986844
+threads_true_dictionary_false,264.6171875,228.841796875,363.46484375,0.4466730974991151
+threads_false_dictionary_false,266.0234375,227.85546875,364.83203125,0.47754902749966277

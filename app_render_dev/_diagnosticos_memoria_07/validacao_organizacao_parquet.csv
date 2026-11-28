@@ -1,0 +1,11 @@
+referencia,layout,equivalente,bases_divergentes
+ESC,original,True,
+ESC,ordenado_rg_50000,True,
+ESC,ordenado_rg_100000,True,
+ESC,ordenado_rg_250000,True,
+ESC,separado_rg_100000,True,
+PROVA,original,True,
+PROVA,ordenado_rg_50000,True,
+PROVA,ordenado_rg_100000,True,
+PROVA,ordenado_rg_250000,True,
+PROVA,separado_rg_100000,True,

@@ -1,0 +1,8 @@
+{
+  "uf": "PA",
+  "memory_pool": "system",
+  "use_threads": false,
+  "read_dictionary": true,
+  "layout": "separado_rg_100000",
+  "downcast_aprovado_na_tolerancia_configurada": true
+}

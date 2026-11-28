@@ -1,0 +1,136 @@
+Dash is running on http://127.0.0.1:8050/
+
+ * Serving Flask app 'app'
+ * Debug mode: off
+11:40:28 | ▶ #1 atualizar_pagina (reconstrói a página)
+11:40:28 | CACHE MISS  UF=PA ref=ESC -> lendo do disco...
+11:40:28 |   Lendo arquivos de PA (referência=ESC)
+11:40:28 |     · parquet painel                                 0.04 s
+11:40:28 |     · parquet faixa etária                           0.01 s
+11:40:28 |     · parquet desempenho por grupo                   0.05 s
+11:40:28 |     · parquet desempenho sexo x faixa                0.05 s
+11:40:29 |     · shapefile PA (geopandas)                       0.08 s
+11:40:29 |     linhas carregadas: painel=5125 faixa=40659 grupo=205400 dsp=263761 | municípios no shape=144
+11:40:29 |     · criar mapa de nomes municipais                 0.01 s
+11:40:29 |     · normalizar referência e harmonizar tabelas     0.14 s
+11:40:29 |     linhas após processamento: painel=3625 faixa=38335 grupo=186449 dsp=250436
+11:40:29 | CACHE MISS  UF=PA ref=ESC -> leitura completa em 0.38 s
+11:40:29 |     · carregar_dados: cópia superficial                 0 ms (cache 381 ms)
+11:40:29 |     · visão geral: criar gráficos                    717 ms
+11:40:29 |     · visão geral: montar layout                       4 ms
+11:40:29 |     · layout 'visao_geral': construir (cache miss)     1.10 s  uf=PA ref=ESC
+11:40:29 | ■ #1 atualizar_pagina (reconstrói a página) concluído em 1.10 s
+11:40:30 | ▶ #2 visão geral · gráfico redes públicas
+11:40:30 | ▶ #3 visão geral · gráfico público x privado
+11:40:30 | ■ #3 visão geral · gráfico público x privado concluído em 89 ms
+11:40:30 | ■ #2 visão geral · gráfico redes públicas concluído em 94 ms
+11:40:32 | ▶ #4 atualizar_pagina (reconstrói a página)
+11:40:32 | CACHE HIT   UF=PA ref=ESC
+11:40:32 |     · carregar_dados: cópia superficial                 1 ms (cache 0 ms)
+11:40:32 |     · layout 'mapas': construir (cache miss)           8 ms  uf=PA ref=ESC
+11:40:32 | ■ #4 atualizar_pagina (reconstrói a página) concluído em 8 ms
+11:40:32 | ▶ #5 mapa · atualizar_kpis
+11:40:32 | CACHE HIT   UF=PA ref=ESC
+11:40:32 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:32 | ▶ #6 mapa · atualizar_indicadores
+11:40:32 | ■ #6 mapa · atualizar_indicadores concluído em 0 ms
+11:40:32 | ■ #5 mapa · atualizar_kpis concluído em 5 ms
+11:40:32 | ▶ #7 mapa · atualizar_mapa
+11:40:32 | CACHE HIT   UF=PA ref=ESC
+11:40:32 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:32 |     · mapa: preparar valores + merge                  11 ms  uf=PA ano=2025 indicador=Participantes
+11:40:33 |     · geojson PA: construir (1x por UF)              358 ms  tolerancia=0.002
+11:40:33 |     · mapa: montar figuras (mapa + top 5)            580 ms
+11:40:33 |     · mapa: estatísticas, histograma, boxplot         32 ms
+11:40:33 | ■ #7 mapa · atualizar_mapa concluído em 624 ms
+11:40:35 | ▶ #8 atualizar_pagina (reconstrói a página)
+11:40:35 | CACHE HIT   UF=PA ref=ESC
+11:40:35 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:35 |     · layout 'analise': construir (cache miss)         5 ms  uf=PA ref=ESC
+11:40:35 | ■ #8 atualizar_pagina (reconstrói a página) concluído em 5 ms
+11:40:35 | ▶ #9 análise · atualizar_municipios (lista de municípios)
+11:40:35 | CACHE HIT   UF=PA ref=ESC
+11:40:35 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:35 | ■ #9 análise · atualizar_municipios (lista de municípios) concluído em 86 ms
+11:40:36 | ▶ #10 análise · atualizar_analise (7 saídas)
+11:40:36 | CACHE HIT   UF=PA ref=ESC
+11:40:36 |     · carregar_dados: cópia superficial                 1 ms (cache 0 ms)
+11:40:36 |     · análise: séries (participantes + desempenho)      45 ms
+11:40:36 |     · análise: figura de comparação                   86 ms
+11:40:36 |     · análise: dispersão + regressão (statsmodels)      89 ms
+11:40:36 | ■ #10 análise · atualizar_analise (7 saídas) concluído em 289 ms
+11:40:38 | ▶ #11 atualizar_pagina (reconstrói a página)
+11:40:38 | CACHE HIT   UF=PA ref=ESC
+11:40:38 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:38 |     · layout 'perfil': construir (cache miss)         55 ms  uf=PA ref=ESC
+11:40:38 | ■ #11 atualizar_pagina (reconstrói a página) concluído em 55 ms
+11:40:39 | ▶ #12 perfil · atualizar_perfil (7 saídas)
+11:40:39 | CACHE HIT   UF=PA ref=ESC
+11:40:39 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:39 |     · perfil: preparar 4 tabelas (copy + to_numeric + códigos)     211 ms
+11:40:39 |     · perfil: agregações                             100 ms
+11:40:39 | ■ #12 perfil · atualizar_perfil (7 saídas) concluído em 498 ms
+11:40:42 | ▶ #13 atualizar_pagina (reconstrói a página)
+11:40:42 | CACHE MISS  UF=PA ref=PROVA -> lendo do disco...
+11:40:42 |   Lendo arquivos de PA (referência=PROVA)
+11:40:42 |     · parquet painel                                 0.01 s
+11:40:42 |     · parquet faixa etária                           0.01 s
+11:40:42 |     · parquet desempenho por grupo                   0.04 s
+11:40:42 |     · parquet desempenho sexo x faixa                0.03 s
+11:40:42 |     · shapefile PA (geopandas)                       0.02 s
+11:40:42 |     linhas carregadas: painel=1339 faixa=23177 grupo=131814 dsp=187444 | municípios no shape=144
+11:40:42 |     · criar mapa de nomes municipais                 0.00 s
+11:40:42 |     · normalizar referência e harmonizar tabelas     0.05 s
+11:40:42 |     linhas após processamento: painel=1339 faixa=23177 grupo=131814 dsp=187444
+11:40:42 | CACHE MISS  UF=PA ref=PROVA -> leitura completa em 0.16 s
+11:40:42 |     · carregar_dados: cópia superficial                 0 ms (cache 156 ms)
+11:40:42 |     · layout 'perfil': construir (cache miss)        194 ms  uf=PA ref=PROVA
+11:40:42 | ■ #13 atualizar_pagina (reconstrói a página) concluído em 194 ms
+11:40:43 | ▶ #14 perfil · atualizar_perfil (7 saídas)
+11:40:43 | CACHE HIT   UF=PA ref=PROVA
+11:40:43 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:43 |     · perfil: preparar 4 tabelas (copy + to_numeric + códigos)     150 ms
+11:40:43 |     · perfil: agregações                              70 ms
+11:40:43 | ■ #14 perfil · atualizar_perfil (7 saídas) concluído em 395 ms
+11:40:46 | ▶ #15 perfil · atualizar_perfil (7 saídas)
+11:40:46 | CACHE HIT   UF=PA ref=PROVA
+11:40:46 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:46 |     · perfil: preparar 4 tabelas (copy + to_numeric + códigos)     162 ms
+11:40:46 |     · perfil: agregações                              77 ms
+11:40:46 | ■ #15 perfil · atualizar_perfil (7 saídas) concluído em 410 ms
+11:40:48 | ▶ #16 atualizar_pagina (reconstrói a página)
+11:40:48 | CACHE HIT   UF=PA ref=PROVA
+11:40:48 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:48 |     · layout 'mapas': construir (cache miss)           5 ms  uf=PA ref=PROVA
+11:40:48 | ■ #16 atualizar_pagina (reconstrói a página) concluído em 5 ms
+11:40:48 | ▶ #17 mapa · atualizar_indicadores
+11:40:48 | ■ #17 mapa · atualizar_indicadores concluído em 0 ms
+11:40:48 | ▶ #18 mapa · atualizar_kpis
+11:40:48 | CACHE HIT   UF=PA ref=PROVA
+11:40:48 |     · carregar_dados: cópia superficial                 1 ms (cache 0 ms)
+11:40:48 | ■ #18 mapa · atualizar_kpis concluído em 4 ms
+11:40:48 | ▶ #19 mapa · atualizar_mapa
+11:40:48 | CACHE HIT   UF=PA ref=PROVA
+11:40:48 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:49 |     · mapa: preparar valores + merge                  14 ms  uf=PA ano=2025 indicador=Participantes
+11:40:49 |     · mapa: montar figuras (mapa + top 5)            218 ms
+11:40:49 |     · mapa: estatísticas, histograma, boxplot         28 ms
+11:40:49 | ■ #19 mapa · atualizar_mapa concluído em 261 ms
+11:40:52 | ▶ #20 mapa · atualizar_mapa
+11:40:52 | CACHE HIT   UF=PA ref=PROVA
+11:40:52 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:52 |     · mapa: preparar valores + merge                  39 ms  uf=PA ano=2025 indicador=Redação
+11:40:52 |     · mapa: montar figuras (mapa + top 5)            224 ms
+11:40:52 |     · mapa: estatísticas, histograma, boxplot         30 ms
+11:40:52 | ■ #20 mapa · atualizar_mapa concluído em 294 ms
+11:40:55 | ▶ #21 atualizar_pagina (reconstrói a página)
+11:40:55 | CACHE HIT   UF=PA ref=PROVA
+11:40:55 |     · carregar_dados: cópia superficial                 0 ms (cache 0 ms)
+11:40:56 |     · visão geral: criar gráficos                    645 ms
+11:40:56 |     · visão geral: montar layout                       3 ms
+11:40:56 |     · layout 'visao_geral': construir (cache miss)     648 ms  uf=PA ref=PROVA
+11:40:56 | ■ #21 atualizar_pagina (reconstrói a página) concluído em 648 ms
+11:40:56 | ▶ #22 visão geral · gráfico público x privado
+11:40:56 | ▶ #23 visão geral · gráfico redes públicas
+11:40:56 | ■ #22 visão geral · gráfico público x privado concluído em 54 ms
+11:40:56 | ■ #23 visão geral · gráfico redes públicas concluído em 94 ms
