@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+
+# Ambientes
+.venv/
+venv/
+env/
+
+# Segredos e variáveis locais
+.env
+.env.*
+!.env.example
+
+# Logs e arquivos temporários
+*.log
+logs/
+dash_log.*
+print_log.*
+
+# Diagnósticos e desenvolvimento (não fazem parte do runtime)
+diagnostico_*.ipynb
+avaliacao_consumo_memoria.ipynb
+Untitled*.ipynb
+_diagnostico05_parquet/
+_diagnostico06_resultados/
+_diagnosticos_memoria_07/
+_diagnosticos_memoria_08/
+sandbox/
+app_*_ram.py
+app_ram.py
+app_otimizado*.py
+*_diagnostico.py
+README_cache1.md
+README_integracao_otimizada.md
+estrutura_projeto.txt
+*.zip
+
+# Preparação temporária dos Parquets
+.preparacao_*/
+.backup_*/

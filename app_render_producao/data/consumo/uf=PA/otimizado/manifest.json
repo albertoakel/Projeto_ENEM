@@ -1,0 +1,206 @@
+{
+  "versao_preparador": "1.1.0",
+  "uf": "PA",
+  "gerado_em_utc": "2026-11-28T13:12:10.284223+00:00",
+  "origem": "data/consumo/uf=PA",
+  "arquivos_originais": {
+    "painel": {
+      "arquivo": "painel_municipal.parquet",
+      "tamanho_bytes": 1242904,
+      "modificado_em_utc": "2026-11-14T19:55:45+00:00"
+    },
+    "faixa": {
+      "arquivo": "faixa_etaria_municipal.parquet",
+      "tamanho_bytes": 151608,
+      "modificado_em_utc": "2026-11-14T19:55:45+00:00"
+    },
+    "grupo": {
+      "arquivo": "desempenho_grupos_municipal.parquet",
+      "tamanho_bytes": 8990440,
+      "modificado_em_utc": "2026-11-14T19:55:46+00:00"
+    },
+    "dsp": {
+      "arquivo": "desempenho_sexo_faixa_etaria_municipal.parquet",
+      "tamanho_bytes": 10593576,
+      "modificado_em_utc": "2026-11-14T19:55:46+00:00"
+    }
+  },
+  "configuracao": {
+    "formato": "ESC_PROVA_RG100000",
+    "row_group_size": 100000,
+    "compression": "snappy",
+    "use_dictionary": true,
+    "use_threads": false,
+    "downcast_na_gravacao": false,
+    "normalizacao_referencia": {
+      "RESIDENCIA": "ESC"
+    },
+    "referencias": [
+      "ESC",
+      "PROVA"
+    ]
+  },
+  "colunas_projetadas": {
+    "painel": [
+      "ano",
+      "CO_MUNICIPIO_TERRITORIO",
+      "TIPO_REFERENCIA_TERRITORIAL",
+      "n_participantes",
+      "n_masculino",
+      "n_feminino",
+      "n_faixa_etaria_informada",
+      "n_escola_federal",
+      "n_escola_estadual",
+      "n_escola_municipal",
+      "n_escola_privada",
+      "n_escola_nao_informada",
+      "media_redacao",
+      "n_validos_redacao",
+      "media_objetiva",
+      "n_validos_objetiva",
+      "media_cn",
+      "n_validos_cn",
+      "media_ch",
+      "n_validos_ch",
+      "media_lc",
+      "n_validos_lc",
+      "media_mt",
+      "n_validos_mt"
+    ],
+    "faixa": [
+      "ano",
+      "CO_MUNICIPIO_TERRITORIO",
+      "TIPO_REFERENCIA_TERRITORIAL",
+      "TP_FAIXA_ETARIA",
+      "n_participantes"
+    ],
+    "grupo": [
+      "ano",
+      "CO_MUNICIPIO_TERRITORIO",
+      "TIPO_REFERENCIA_TERRITORIAL",
+      "tipo_grupo",
+      "grupo",
+      "disciplina",
+      "media",
+      "n_validos",
+      "mediana",
+      "std",
+      "q1",
+      "q3"
+    ],
+    "dsp": [
+      "ano",
+      "CO_MUNICIPIO_TERRITORIO",
+      "TIPO_REFERENCIA_TERRITORIAL",
+      "sexo",
+      "faixa_etaria",
+      "disciplina",
+      "n_participantes",
+      "n_validos",
+      "media",
+      "std"
+    ]
+  },
+  "arquivos_gerados": [
+    {
+      "base": "painel",
+      "referencia": "ESC",
+      "arquivo": "otimizado/painel_ESC.parquet",
+      "linhas": 5125,
+      "colunas": 24,
+      "row_groups": 1,
+      "tamanho_mb": 0.257,
+      "hash_soma_uint64": 13157105849490210116,
+      "hash_xor_uint64": 6552626948796085312,
+      "validacao": "OK"
+    },
+    {
+      "base": "painel",
+      "referencia": "PROVA",
+      "arquivo": "otimizado/painel_PROVA.parquet",
+      "linhas": 1339,
+      "colunas": 24,
+      "row_groups": 1,
+      "tamanho_mb": 0.143,
+      "hash_soma_uint64": 11649155130207209213,
+      "hash_xor_uint64": 12602510824040429737,
+      "validacao": "OK"
+    },
+    {
+      "base": "faixa",
+      "referencia": "ESC",
+      "arquivo": "otimizado/faixa_ESC.parquet",
+      "linhas": 40659,
+      "colunas": 5,
+      "row_groups": 1,
+      "tamanho_mb": 0.094,
+      "hash_soma_uint64": 17588641345942873063,
+      "hash_xor_uint64": 3931092228045365505,
+      "validacao": "OK"
+    },
+    {
+      "base": "faixa",
+      "referencia": "PROVA",
+      "arquivo": "otimizado/faixa_PROVA.parquet",
+      "linhas": 23177,
+      "colunas": 5,
+      "row_groups": 1,
+      "tamanho_mb": 0.057,
+      "hash_soma_uint64": 8516167501954685018,
+      "hash_xor_uint64": 7258031355721351054,
+      "validacao": "OK"
+    },
+    {
+      "base": "grupo",
+      "referencia": "ESC",
+      "arquivo": "otimizado/grupo_ESC.parquet",
+      "linhas": 205400,
+      "colunas": 12,
+      "row_groups": 3,
+      "tamanho_mb": 4.284,
+      "hash_soma_uint64": 2666680946455781559,
+      "hash_xor_uint64": 6602577548169710879,
+      "validacao": "OK"
+    },
+    {
+      "base": "grupo",
+      "referencia": "PROVA",
+      "arquivo": "otimizado/grupo_PROVA.parquet",
+      "linhas": 131814,
+      "colunas": 12,
+      "row_groups": 2,
+      "tamanho_mb": 3.457,
+      "hash_soma_uint64": 13936630911664688147,
+      "hash_xor_uint64": 13117229265106027979,
+      "validacao": "OK"
+    },
+    {
+      "base": "dsp",
+      "referencia": "ESC",
+      "arquivo": "otimizado/dsp_ESC.parquet",
+      "linhas": 263761,
+      "colunas": 10,
+      "row_groups": 3,
+      "tamanho_mb": 3.222,
+      "hash_soma_uint64": 4508641949741006091,
+      "hash_xor_uint64": 10981785790140965475,
+      "validacao": "OK"
+    },
+    {
+      "base": "dsp",
+      "referencia": "PROVA",
+      "arquivo": "otimizado/dsp_PROVA.parquet",
+      "linhas": 187444,
+      "colunas": 10,
+      "row_groups": 2,
+      "tamanho_mb": 3.477,
+      "hash_soma_uint64": 969243322286495189,
+      "hash_xor_uint64": 7290504266962405319,
+      "validacao": "OK"
+    }
+  ],
+  "validacao_geral": {
+    "quantidade_arquivos": 8,
+    "todos_validos": true
+  }
+}
